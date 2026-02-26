@@ -971,10 +971,11 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [x] Configure `app/core/enums.py` (ClassType, ItemRarity, ItemType, PotionType, CombatResult)
   - [x] Create `models/user.py` (UUID PK, email, username, hashed_password, is_verified, is_admin, is_banned, ban_reason, timestamps)
   - [x] Create `models/character.py` (UUID PK, user_id FK, stats, power_level, stamina, pvp_tokens default 3, check constraints, timestamps — pvp_rating lives in pvp_rankings)
-  - [ ] Create `models/zone.py`, `models/monster.py`, `models/monster_level.py`, `models/monster_progress.py`, `models/zone_progress.py`
-  - [ ] Create `models/item.py`, `models/inventory.py`, `models/potion.py`, `models/potion_inventory.py`
-  - [ ] Create `models/combat_log.py`, `models/pvp_match.py`, `models/shop_listing.py`
+  - [x] Create `models/zone.py`, `models/monster.py`, `models/monster_level.py`, `models/monster_progress.py`, `models/zone_progress.py`
+  - [x] Create `models/item.py`, `models/inventory.py`, `models/potion.py`, `models/potion_inventory.py`
+  - [x] Create `models/combat_logs.py`, `models/pvp_matches.py`, `models/monster_drops.py`, `models/shop_listings.py`, `models/pvp_ranking.py`
   - [x] Run first migration: `alembic revision --autogenerate -m "initial"` and `alembic upgrade head`
+  - [x] Run second migration: `alembic revision --autogenerate -m "add remaining models"` and `alembic upgrade head`
   - [ ] Verify Redis connection and basic get/set operations
   - [ ] Create a seed script runner for loading static game data later
 
@@ -1030,12 +1031,12 @@ GET    /admin/stats                  - Game statistics dashboard data
 ### Phase 2: Combat & Progression (Target: ~10-15 hours)
 
 - [ ] **Zone and monster seed data**
-  - [ ] Create migrations: `zones` table (id, name, description, order, recommended_level_min/max)
-  - [ ] Create migrations: `monsters` table (id, zone_id FK, name, base_hp/attack/defense, base_xp_reward, base_gold_min/max, order_in_zone, is_zone_boss)
-  - [ ] Create migrations: `monster_levels` table (monster_id FK, level 1-5, multipliers for hp/attack/defense/xp/gold, drop_chance_bonus — per-monster, not global)
-  - [ ] Create migrations: `monster_drops` table (monster_id FK, item_id FK, drop_chance float — explicit per-monster item drop pool)
-  - [ ] Create migrations: `monster_progress` table (character_id, monster_id, highest_level_beaten, total_kills)
-  - [ ] Create migrations: `zone_progress` table (character_id, zone_id, is_unlocked)
+  - [x] Create migrations: `zones` table (id, name, description, order, recommended_level_min/max)
+  - [x] Create migrations: `monsters` table (id, zone_id FK, name, base_hp/attack/defense, base_xp_reward, base_gold_min/max, order_in_zone, is_zone_boss)
+  - [x] Create migrations: `monster_levels` table (monster_id FK, level 1-5, multipliers for hp/attack/defense/xp/gold, drop_chance_bonus — per-monster, not global)
+  - [x] Create migrations: `monster_drops` table (monster_id FK, item_id FK, drop_chance float — explicit per-monster item drop pool)
+  - [x] Create migrations: `monster_progress` table (character_id, monster_id, highest_level_beaten, total_kills)
+  - [x] Create migrations: `zone_progress` table (character_id, zone_id, is_unlocked)
   - [ ] Write seed data script: insert all 4 zones with descriptions
   - [ ] Write seed data script: insert all 16 monsters with base stats (see Seed Data section)
   - [ ] Write seed data script: insert monster level multipliers (1.0x through 2.5x)
