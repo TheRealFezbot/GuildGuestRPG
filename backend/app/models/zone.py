@@ -6,8 +6,8 @@ import uuid
 class Zone(Base):
     __tablename__ = "zones"
     __table_args__ = (
-        CheckConstraint("order >= 1", name="check_order_min"),
-        CheckConstraint("order <= 4", name="check_order_max"),
+        CheckConstraint('"order" >= 1', name="check_order_min"),
+        CheckConstraint('"order" <= 4', name="check_order_max"),
     )
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
