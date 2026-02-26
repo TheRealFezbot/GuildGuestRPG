@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Boolean, DateTime, ForeignKey, Enum, CheckConstraint
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum, CheckConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, timezone
 from app.core.enums import ClassType
