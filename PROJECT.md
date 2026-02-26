@@ -942,18 +942,28 @@ GET    /admin/stats                  - Game statistics dashboard data
 
 ### Phase 1: Foundation & Core (Target: ~15-20 hours)
 
-- [ ] **Project setup**
-  - [ ] Initialize FastAPI backend project with project structure (`app/`, `routers/`, `models/`, `schemas/`, `services/`, `core/`)
-  - [ ] Initialize React + TypeScript frontend with Vite
-  - [ ] Install and configure Tailwind CSS with custom gold/brown/bordeaux color palette
-  - [ ] Create `docker-compose.yml` with FastAPI, PostgreSQL, and Redis services
-  - [ ] Set up environment variables (`.env` file with DB URL, Redis URL, JWT secret, email API key)
+- [x] **Project setup**
+  - [x] Initialize FastAPI backend project with project structure (`app/`, `routers/`, `models/`, `schemas/`, `services/`, `core/`)
+  - [x] Initialize React + TypeScript frontend with Vite
+  - [x] Install and configure Tailwind CSS v4 with `@tailwindcss/vite` plugin
+  - [x] Create `docker-compose.yml` with FastAPI, PostgreSQL, and Redis services
+  - [x] Set up environment variables (`.env` + `.env.example`)
+  - [x] Create `.gitignore`
   - [ ] Verify all services start and can communicate
 
 - [ ] **PostgreSQL + Redis setup with migrations**
-  - [ ] Install SQLAlchemy + Alembic for database ORM and migrations
-  - [ ] Create initial migration: `users` table (id, email, password_hash, is_verified, is_admin, is_banned, ban_reason, created_at, updated_at)
-  - [ ] Create migration: `characters` table (id, user_id unique FK, name unique, class, level, xp, gold, hp, max_hp, attack, defense, power_level, stamina, stamina_updated_at, pvp_tokens, pvp_tokens_reset_at, created_at, updated_at)
+  - [x] Install SQLAlchemy + Alembic for database ORM and migrations
+  - [x] Configure `app/core/config.py` (pydantic-settings, reads from `.env`)
+  - [x] Configure `app/core/database.py` (SQLAlchemy engine, session, Base)
+  - [x] Configure `app/main.py` (FastAPI app, CORS, health check endpoint)
+  - [x] Configure `alembic/env.py` (reads DB URL from app settings, uses Base.metadata)
+  - [x] Configure `app/core/enums.py` (ClassType, ItemRarity)
+  - [x] Create `models/user.py` (UUID PK, email, username, hashed_password, is_verified, is_admin, is_banned, ban_reason, timestamps)
+  - [x] Create `models/character.py` (UUID PK, user_id FK, stats, stamina, pvp_tokens, pvp_rating, check constraints, timestamps)
+  - [ ] Create `models/zone.py`, `models/monster.py`, `models/monster_level.py`, `models/monster_progress.py`, `models/zone_progress.py`
+  - [ ] Create `models/item.py`, `models/inventory.py`, `models/potion.py`, `models/potion_inventory.py`
+  - [ ] Create `models/combat_log.py`, `models/pvp_match.py`, `models/shop_listing.py`
+  - [ ] Run first migration: `alembic revision --autogenerate -m "initial"` and `alembic upgrade head`
   - [ ] Verify Redis connection and basic get/set operations
   - [ ] Create a seed script runner for loading static game data later
 
