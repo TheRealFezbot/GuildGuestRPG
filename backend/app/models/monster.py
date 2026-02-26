@@ -8,6 +8,7 @@ class Monster(Base):
     __table_args__ = (
         CheckConstraint("order_in_zone >= 1", name="check_order_in_zone_min"),
         CheckConstraint("order_in_zone <= 4", name="check_order_in_zone_max"),
+        CheckConstraint("base_gold_in <= base_gold_max", name="check_base_gold_non_exceeding"),
         UniqueConstraint("zone_id", "order_in_zone", name="uq_monster_zone_order")
     )
 

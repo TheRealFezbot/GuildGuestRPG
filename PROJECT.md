@@ -649,6 +649,7 @@ points_gained = clamp(points_gained, 5, 50)
 users
 ├── id (UUID, PK)
 ├── email (unique)
+├── username (unique)
 ├── password_hash
 ├── is_verified (boolean, default false)
 ├── is_admin (boolean, default false)
@@ -673,7 +674,7 @@ characters
 ├── power_level (cached, recalculated on changes)
 ├── stamina (default 100)
 ├── stamina_updated_at (for recharge calculation)
-├── pvp_tokens (default 5)
+├── pvp_tokens (default 3)
 ├── pvp_tokens_reset_at (for daily reset)
 ├── created_at
 └── updated_at
@@ -701,16 +702,26 @@ monsters
 ├── order_in_zone (1-4, determines unlock sequence)
 └── is_zone_boss (boolean, true for 4th monster)
 
--- Monster Levels (scaling data, static)
+-- Monster Levels (per-monster scaling data, static)
 monster_levels
 ├── id (UUID, PK)
+├── monster_id (FK → monsters)
 ├── level (1-5)
 ├── hp_multiplier
 ├── attack_multiplier
 ├── defense_multiplier
 ├── xp_multiplier
 ├── gold_multiplier
-└── drop_chance_bonus
+├── drop_chance_bonus
+└── UNIQUE(monster_id, level)
+
+-- Monster Drops (which items each monster can drop, static)
+monster_drops
+├── id (UUID, PK)
+├── monster_id (FK → monsters)
+├── item_id (FK → items)
+├── drop_chance (float, 0.0–1.0)
+└── UNIQUE(monster_id, item_id)
 
 -- Player Monster Progress
 monster_progress
@@ -949,7 +960,7 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [x] Create `docker-compose.yml` with FastAPI, PostgreSQL, and Redis services
   - [x] Set up environment variables (`.env` + `.env.example`)
   - [x] Create `.gitignore`
-  - [ ] Verify all services start and can communicate
+  - [x] Verify all services start and can communicate
 
 - [ ] **PostgreSQL + Redis setup with migrations**
   - [x] Install SQLAlchemy + Alembic for database ORM and migrations
@@ -957,13 +968,13 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [x] Configure `app/core/database.py` (SQLAlchemy engine, session, Base)
   - [x] Configure `app/main.py` (FastAPI app, CORS, health check endpoint)
   - [x] Configure `alembic/env.py` (reads DB URL from app settings, uses Base.metadata)
-  - [x] Configure `app/core/enums.py` (ClassType, ItemRarity)
+  - [x] Configure `app/core/enums.py` (ClassType, ItemRarity, ItemType, PotionType, CombatResult)
   - [x] Create `models/user.py` (UUID PK, email, username, hashed_password, is_verified, is_admin, is_banned, ban_reason, timestamps)
-  - [x] Create `models/character.py` (UUID PK, user_id FK, stats, stamina, pvp_tokens, pvp_rating, check constraints, timestamps)
+  - [x] Create `models/character.py` (UUID PK, user_id FK, stats, power_level, stamina, pvp_tokens default 3, check constraints, timestamps — pvp_rating lives in pvp_rankings)
   - [ ] Create `models/zone.py`, `models/monster.py`, `models/monster_level.py`, `models/monster_progress.py`, `models/zone_progress.py`
   - [ ] Create `models/item.py`, `models/inventory.py`, `models/potion.py`, `models/potion_inventory.py`
   - [ ] Create `models/combat_log.py`, `models/pvp_match.py`, `models/shop_listing.py`
-  - [ ] Run first migration: `alembic revision --autogenerate -m "initial"` and `alembic upgrade head`
+  - [x] Run first migration: `alembic revision --autogenerate -m "initial"` and `alembic upgrade head`
   - [ ] Verify Redis connection and basic get/set operations
   - [ ] Create a seed script runner for loading static game data later
 
@@ -1021,7 +1032,8 @@ GET    /admin/stats                  - Game statistics dashboard data
 - [ ] **Zone and monster seed data**
   - [ ] Create migrations: `zones` table (id, name, description, order, recommended_level_min/max)
   - [ ] Create migrations: `monsters` table (id, zone_id FK, name, base_hp/attack/defense, base_xp_reward, base_gold_min/max, order_in_zone, is_zone_boss)
-  - [ ] Create migrations: `monster_levels` table (level 1-5, multipliers for hp/attack/defense/xp/gold, drop_chance_bonus)
+  - [ ] Create migrations: `monster_levels` table (monster_id FK, level 1-5, multipliers for hp/attack/defense/xp/gold, drop_chance_bonus — per-monster, not global)
+  - [ ] Create migrations: `monster_drops` table (monster_id FK, item_id FK, drop_chance float — explicit per-monster item drop pool)
   - [ ] Create migrations: `monster_progress` table (character_id, monster_id, highest_level_beaten, total_kills)
   - [ ] Create migrations: `zone_progress` table (character_id, zone_id, is_unlocked)
   - [ ] Write seed data script: insert all 4 zones with descriptions
@@ -1136,9 +1148,9 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [ ] Frontend: zone selector to browse shops from different zones
 
 - [ ] **Item drops from monsters**
-  - [ ] On combat win: roll drop chance (base 10%, Rogue 20%, + monster level bonus from monster_levels table)
-  - [ ] If drop confirmed: roll rarity based on zone (Zone 1: mostly common, Zone 4: up to epic)
-  - [ ] Select a random item of that rarity and appropriate type from the zone's item pool
+  - [ ] On combat win: roll drop chance (base 10%, Rogue 20%, + drop_chance_bonus from monster_levels row)
+  - [ ] If drop confirmed: pick a random item from the monster's monster_drops entries, weighted by drop_chance
+  - [ ] Fallback: if monster has no monster_drops entries, no item drops
   - [ ] Add dropped item to character's inventory
   - [ ] Store item_dropped_id in combat_log
   - [ ] Include drop in combat log text: "Item Drop: [Item Name] ([rarity])"
@@ -1174,7 +1186,7 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [ ] Calculate rating change: `20 + (opponent_rating - your_rating) / 25`, clamped 5-50
   - [ ] Winner gains points, loser loses half that amount (minimum 0)
   - [ ] Update pvp_rankings for both players, save pvp_match record
-  - [ ] Implement daily PvP token reset: on read, if pvp_tokens_reset_at is before today, reset to 5 tokens
+  - [ ] Implement daily PvP token reset: on read, if pvp_tokens_reset_at is before today, reset to 3 tokens
   - [ ] `GET /pvp/history` — paginated PvP match history with opponent names and results
   - [ ] Frontend: PvP arena page showing remaining tokens, 3 opponent cards with stats
   - [ ] Frontend: challenge confirmation modal with opponent comparison
