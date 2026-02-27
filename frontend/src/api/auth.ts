@@ -10,6 +10,10 @@ export const register = async (email: string, username: string, password: string
     await client.post('/auth/register', { email, username, password, date_of_birth})
 }
 
+export const verifyEmail = async (token: string): Promise<void> => {
+    await client.get(`/auth/verify?token=${token}`)
+}
+
 export const getMe = async (): Promise<User> => {
     const res = await client.get('/auth/me')
     return res.data
