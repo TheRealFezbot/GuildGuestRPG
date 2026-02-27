@@ -846,7 +846,7 @@ shop_listings
 POST   /auth/register              - Create account (sends verification email)
 POST   /auth/login                 - Get JWT tokens
 POST   /auth/refresh               - Refresh access token
-POST   /auth/verify-email          - Verify email with token
+GET    /auth/verify                 - Verify email with token (called from email link)
 POST   /auth/forgot-password       - Request password reset email
 POST   /auth/reset-password        - Reset password with token
 GET    /auth/me                    - Get current user
@@ -1020,13 +1020,13 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [ ] Frontend: stamina bar display with current/max and time-to-next-point countdown
 
 - [ ] **Frontend foundation**
-  - [ ] Set up React Router with route structure (/, /login, /register, /game, /game/character, etc.)
-  - [ ] Create auth context/store (JWT storage, login/logout, auto-refresh)
+  - [x] Set up React Router with route structure (/login, /register — more routes to come)
+  - [x] Create auth context/store (JWT storage in localStorage, login/logout, session restore on load)
   - [ ] Create protected route wrapper (redirect to /login if not authenticated)
   - [ ] Build landing page with game intro and register CTA
-  - [ ] Build login and register forms with validation
+  - [x] Build login and register forms with validation
   - [ ] Build main game layout shell (sidebar nav, content area, stamina bar)
-  - [ ] Set up API client (axios or fetch wrapper with JWT headers)
+  - [x] Set up API client (axios with JWT interceptor, proxy to backend via Vite)
 
 ### Phase 2: Combat & Progression (Target: ~10-15 hours)
 
@@ -1037,9 +1037,9 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [x] Create migrations: `monster_drops` table (monster_id FK, item_id FK, drop_chance float — explicit per-monster item drop pool)
   - [x] Create migrations: `monster_progress` table (character_id, monster_id, highest_level_beaten, total_kills)
   - [x] Create migrations: `zone_progress` table (character_id, zone_id, is_unlocked)
-  - [ ] Write seed data script: insert all 4 zones with descriptions
-  - [ ] Write seed data script: insert all 16 monsters with base stats (see Seed Data section)
-  - [ ] Write seed data script: insert monster level multipliers (1.0x through 2.5x)
+  - [x] Write seed data script: insert all 4 zones with descriptions
+  - [x] Write seed data script: insert all 16 monsters with base stats (see Seed Data section)
+  - [x] Write seed data script: insert monster level multipliers (1.0x through 2.5x)
   - [ ] Auto-unlock Zone 1 for new characters on creation
 
 - [ ] **Monster progression system (unlock logic)**

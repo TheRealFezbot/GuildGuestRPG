@@ -4,7 +4,7 @@ from app.core.config import settings
 resend.api_key = settings.resend_api_key
 
 def send_verification_email(to_email, token):
-    url = "http://localhost:8000/auth/verify?token=" + token
+    url = "http://localhost:5173/auth/verify?token=" + token
     
     resend.Emails.send({
         "from": "onboarding@resend.dev",
