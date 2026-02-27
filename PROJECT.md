@@ -979,25 +979,25 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [ ] Verify Redis connection and basic get/set operations
   - [ ] Create a seed script runner for loading static game data later
 
-- [ ] **User auth (register, login, JWT, email verification, password reset)**
-  - [ ] Create Pydantic schemas for register, login, token response, password reset
-  - [ ] Implement password hashing with bcrypt
-  - [ ] `POST /auth/register` — validate email uniqueness, hash password, create user, send verification email, return success
-  - [ ] `POST /auth/login` — verify email + password, check is_verified, check is_banned, return access + refresh JWT tokens
-  - [ ] `POST /auth/refresh` — validate refresh token, issue new access token
-  - [ ] `GET /auth/me` — JWT-protected endpoint, return current user info
-  - [ ] `POST /auth/verify-email` — accept token from email link, set is_verified = true
+- [x] **User auth (register, login, JWT, email verification, password reset)**
+  - [x] Create Pydantic schemas for register, login, token response, password reset
+  - [x] Implement password hashing with bcrypt
+  - [x] `POST /auth/register` — validate email uniqueness, hash password, create user, send verification email, return success
+  - [x] `POST /auth/login` — verify email + password, check is_verified, check is_banned, return access + refresh JWT tokens
+  - [x] `POST /auth/refresh` — validate refresh token, issue new access token
+  - [x] `GET /auth/me` — JWT-protected endpoint, return current user info
+  - [x] `GET /auth/verify` — accept token from email link, set is_verified = true
   - [ ] `POST /auth/forgot-password` — validate email exists, send password reset email with token
   - [ ] `POST /auth/reset-password` — accept token + new password, update password_hash
-  - [ ] Create JWT utility functions (create_access_token, create_refresh_token, decode_token)
-  - [ ] Create auth dependency (`get_current_user`) for protecting routes
+  - [x] Create JWT utility functions (create_access_token, create_refresh_token, decode_token)
+  - [x] Create auth dependency (`get_current_user`) for protecting routes
 
-- [ ] **Email service integration**
-  - [ ] Choose and set up Resend or SendGrid account
-  - [ ] Create email utility module (`app/core/email.py`)
-  - [ ] Create email verification template (HTML with token link)
+- [x] **Email service integration**
+  - [x] Choose and set up Resend account
+  - [x] Create email utility module (`app/services/email.py`)
+  - [x] Create email verification template (HTML with token link)
   - [ ] Create password reset template (HTML with reset link)
-  - [ ] Test email sending in development (use Resend sandbox or test mode)
+  - [x] Test email sending in development (Resend onboarding@resend.dev sender)
 
 - [ ] **Character creation (name, class selection)**
   - [ ] `POST /characters` — validate name uniqueness, validate class enum (warrior/mage/rogue/ranger), set starting stats based on class table, create character linked to user
