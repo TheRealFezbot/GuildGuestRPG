@@ -987,8 +987,8 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [x] `POST /auth/refresh` — validate refresh token, issue new access token
   - [x] `GET /auth/me` — JWT-protected endpoint, return current user info
   - [x] `GET /auth/verify` — accept token from email link, set is_verified = true
-  - [ ] `POST /auth/forgot-password` — validate email exists, send password reset email with token
-  - [ ] `POST /auth/reset-password` — accept token + new password, update password_hash
+  - [x] `POST /auth/forgot-password` — validate email exists, send password reset email with token
+  - [x] `POST /auth/reset-password` — accept token + new password, update password_hash
   - [x] Create JWT utility functions (create_access_token, create_refresh_token, decode_token)
   - [x] Create auth dependency (`get_current_user`) for protecting routes
 
@@ -996,20 +996,20 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [x] Choose and set up Resend account
   - [x] Create email utility module (`app/services/email.py`)
   - [x] Create email verification template (HTML with token link)
-  - [ ] Create password reset template (HTML with reset link)
+  - [x] Create password reset template (HTML with reset link)
   - [x] Test email sending in development (Resend onboarding@resend.dev sender)
 
-- [ ] **Character creation (name, class selection)**
-  - [ ] `POST /characters` — validate name uniqueness, validate class enum (warrior/mage/rogue/ranger), set starting stats based on class table, create character linked to user
-  - [ ] Apply class-specific base stats: Warrior (120 HP, 10 ATK, 8 DEF), Mage (80/15/4), Rogue (100/12/5), Ranger (100/11/6)
-  - [ ] Set defaults: level 1, xp 0, gold 100, stamina 100
+- [x] **Character creation (name, class selection)**
+  - [x] `POST /characters` — validate name uniqueness, validate class enum (warrior/mage/rogue/ranger), set starting stats based on class table, create character linked to user
+  - [x] Apply class-specific base stats: Warrior (120 HP, 10 ATK, 8 DEF), Mage (80/15/4), Rogue (100/12/5), Ranger (100/11/6)
+  - [x] Set defaults: level 1, xp 0, gold 100, stamina 100
   - [ ] Ensure one character per user (unique constraint on user_id)
   - [ ] Frontend: class selection screen with class descriptions, stat previews, and name input
 
-- [ ] **Character stats view + power level calculation**
-  - [ ] `GET /characters/me` — return full character stats, current stamina (calculated), power level, equipped items (empty for now)
-  - [ ] `GET /characters/{id}` — return public profile (name, class, level, power level — no gold/stamina)
-  - [ ] Implement power level formula: `level*10 + attack + defense + max_hp/2 + equipment bonuses`
+- [x] **Character stats view + power level calculation**
+  - [x] `GET /characters/me` — return full character stats, current stamina (calculated), power level, equipped items (empty for now)
+  - [x] `GET /characters/{id}` — return public profile (name, class, level, power level — no gold/stamina)
+  - [x] Implement power level formula: `level*10 + attack + defense + max_hp/2 + equipment bonuses`
   - [ ] Create utility function to recalculate and cache power_level on character changes
   - [ ] Frontend: character stats page showing all stats, class, level, XP progress bar, power level
 
