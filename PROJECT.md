@@ -977,7 +977,7 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [x] Run first migration: `alembic revision --autogenerate -m "initial"` and `alembic upgrade head`
   - [x] Run second migration: `alembic revision --autogenerate -m "add remaining models"` and `alembic upgrade head`
   - [ ] Verify Redis connection and basic get/set operations
-  - [ ] Create a seed script runner for loading static game data later
+  - [x] Create a seed script runner for loading static game data (app/seed/run_seeds.py)
 
 - [x] **User auth (register, login, JWT, email verification, password reset)**
   - [x] Create Pydantic schemas for register, login, token response, password reset
@@ -1004,14 +1004,14 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [x] Apply class-specific base stats: Warrior (120 HP, 10 ATK, 8 DEF), Mage (80/15/4), Rogue (100/12/5), Ranger (100/11/6)
   - [x] Set defaults: level 1, xp 0, gold 100, stamina 100
   - [ ] Ensure one character per user (unique constraint on user_id)
-  - [ ] Frontend: class selection screen with class descriptions, stat previews, and name input
+  - [x] Frontend: class selection screen with class descriptions, stat previews, and name input
 
 - [x] **Character stats view + power level calculation**
   - [x] `GET /characters/me` — return full character stats, current stamina (calculated), power level, equipped items (empty for now)
   - [x] `GET /characters/{id}` — return public profile (name, class, level, power level — no gold/stamina)
   - [x] Implement power level formula: `level*10 + attack + defense + max_hp/2 + equipment bonuses`
-  - [ ] Create utility function to recalculate and cache power_level on character changes
-  - [ ] Frontend: character stats page showing all stats, class, level, XP progress bar, power level
+  - [x] Create utility function to recalculate and cache power_level on character changes (calculate_power_level in core/game.py)
+  - [x] Frontend: character dashboard showing all stats, class, level, XP, gold, equipment slots, zone/pvp/guild placeholders
 
 - [ ] **Stamina system**
   - [ ] Implement stamina calculation on-read: `current_stamina = min(100, stored_stamina + minutes_since_update / 3)`
@@ -1025,7 +1025,7 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [x] Create protected route wrapper (redirect to /login if not authenticated)
   - [x] Build email verification page (/auth/verify — reads token from URL, calls API on mount)
   - [x] Build login and register forms with validation and Tailwind styling (gold/brown/bordeaux palette)
-  - [ ] Build main game layout shell (sidebar nav, content area, stamina bar)
+  - [x] Build main game layout shell (top navbar with responsive hamburger menu, GameLayout wrapper, protected routes)
   - [x] Set up API client (axios with JWT interceptor, proxy to backend via Vite)
 
 ### Phase 2: Combat & Progression (Target: ~10-15 hours)
