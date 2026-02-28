@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.crud.character import get_character_by_id, get_character_by_name, get_character_by_user_id, create_character
 from app.schemas.character import CharacterCreate, CharacterResponse, CharacterPublic
 from app.core.dependencies import get_current_user
-from app.crud.character import get_character_by_id, get_character_by_name, get_character_by_user_id, create_character
+from app.core.constants import BASE_STATS
 from app.core.database import get_db
 from app.models.user import User
 
@@ -22,6 +23,10 @@ async def create(data: CharacterCreate, db: Session = Depends(get_db), current_u
 async def get_me(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return get_character_by_user_id(db, current_user.id)
 
+@router.get("/classes")
+def get_class_stats():
+    return BASE_STATS
+
 @router.get("/{character_id}", response_model=CharacterPublic)
 async def get_character(character_id: str, db: Session = Depends(get_db)):
     character = get_character_by_id(db, character_id)
@@ -29,8 +34,3 @@ async def get_character(character_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No character found")
     
     return character
-
-@router.get("/classes")
-def get_class_stats():
-    return BASE_STATS
-

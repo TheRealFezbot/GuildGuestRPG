@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from datetime import datetime
 from uuid import UUID
 
@@ -7,6 +7,13 @@ from app.models.character import ClassType
 class CharacterCreate(BaseModel):
     name: str
     class_type: ClassType
+
+    @field_validator("name")
+    @classmethod
+    def name_must_not_be_empty(cls, v):
+        if not v.strip():
+            raise ValueError("Name cannot be empty.")
+        return v.strip()
 
 class CharacterResponse(BaseModel):
     model_config = {"from_attributes": True}

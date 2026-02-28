@@ -16,8 +16,13 @@ function LoginPage() {
         try {
             await login(identifier, password)
             navigate("/")
-        } catch {
-            setError("Invalid credentials")
+        } catch (err: any) {
+            const detail = err.response?.data?.detail
+            if (typeof detail =="string") {
+                setError(detail)
+            } else {
+                setError("Invalid credentials")
+            }
         }
     }
 

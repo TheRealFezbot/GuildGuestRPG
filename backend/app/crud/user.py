@@ -3,7 +3,7 @@ from app.models.user import User
 
 
 def create_user(db: Session, email: str, username: str, hashed_password: str):
-    user = User(email=email, username=username, hashed_password=hashed_password)
+    user = User(email=email, username=username.lower(), hashed_password=hashed_password)
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -17,7 +17,7 @@ def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
 def get_user_by_username(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first()
+    return db.query(User).filter(User.username == username.lower()).first()
 
 def get_user_by_id(db: Session, user_id: str):
     return db.query(User).filter(User.id == user_id).first()

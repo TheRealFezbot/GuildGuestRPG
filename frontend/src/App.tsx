@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import VerifyPage from "./pages/VerifyPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import HomePage from "./pages/HomePage";
+import CreateCharacterPage from "./pages/CreateCharacterPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/auth/verify" element={<VerifyPage />} />
+          <Route path="/character/create" element={<ProtectedRoute><CreateCharacterPage></CreateCharacterPage></ProtectedRoute>} />
           <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
