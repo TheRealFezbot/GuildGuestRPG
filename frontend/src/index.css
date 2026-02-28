@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+@theme {
+    --color-bg: #1a1109;
+    --color-surface: #2d1f0e;
+    --color-gold: #c9a227;
+    --color-bordeaux: #7b1c2e;
+    --color-parchment: #e8d5b0;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-parchment);
+}

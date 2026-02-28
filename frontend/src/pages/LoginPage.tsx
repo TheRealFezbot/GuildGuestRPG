@@ -28,24 +28,28 @@ function LoginPage() {
     }, [user, isLoading])
 
     return (
-        <div>
-            <h1>Login</h1>
-            {error && <p>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <input 
-                type="text" 
-                value={identifier} 
-                onChange={(e) => setIdentifier(e.target.value)} 
-                placeholder="Username or Email" 
-                />
-                <input 
-                type="password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password" 
-                />
-                <button type="submit">Login</button>
-            </form>
+        <div className="min-h-screen flex items-center justify-center bg-bg">
+            <div className="bg-surface p-8 rounded-lg w-full max-w-sm flex flex-col gap-4 min-h-80">
+                <h1 className="text-gold text-2xl font-bold text-center">Login</h1>
+                <p className="text-red-400 text-sm min-h-5">{error ?? ""}</p>
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                    <input className="bg-bg text-parchment border border-gold/30 rounded px-3 py-2 w-full"
+                    type="text" 
+                    value={identifier} 
+                    onChange={(e) => setIdentifier(e.target.value)} 
+                    placeholder="Username or Email" 
+                    autoComplete="off"
+                    />
+                    <input className="bg-bg text-parchment border border-gold/30 rounded px-3 py-2 w-full"
+                    type="password" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password" 
+                    autoComplete="current-password"
+                    />
+                    <button className="bg-gold text-bg font-bold py-2 rounded hover:brightness-110 w-full" type="submit">Login</button>
+                </form>
+            </div>
         </div>
     )
 }

@@ -36,35 +36,37 @@ function RegisterPage() {
         }, [user, isLoading])
 
     return (
-        <div>
-            <h1>Register</h1>
-            {error && <p>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <input 
-                type="email" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
-                placeholder="Email" 
-                />
-                <input 
-                type="text" 
-                value={username} 
-                onChange={(e) => setUsername(e.target.value)} 
-                placeholder="Username" 
-                />
-                <input 
-                type="password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password" 
-                />
-                <input 
-                type="date" 
-                value={dateOfBirth} 
-                onChange={(e) => setDateOfBirth(e.target.value)}
-                />
-                <button type="submit">Register</button>
-            </form>
+        <div className="min-h-screen flex items-center justify-center bg-bg">
+            <div className="bg-surface p-8 rounded-lg w-full max-w-sm flex flex-col gap-4 min-h-80">
+                <h1 className="text-gold text-2xl font-bold text-center">Register</h1>
+                <p className="text-red-400 text-sm min-h-5">{error ?? ""}</p>
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                    <input className="bg-bg text-parchment border border-gold/30 rounded px-3 py-2 w-full" 
+                    type="email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    placeholder="Email" 
+                    />
+                    <input className="bg-bg text-parchment border border-gold/30 rounded px-3 py-2 w-full" 
+                    type="text" 
+                    value={username} 
+                    onChange={(e) => setUsername(e.target.value)} 
+                    placeholder="Username" 
+                    />
+                    <input className="bg-bg text-parchment border border-gold/30 rounded px-3 py-2 w-full" 
+                    type="password" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password" 
+                    />
+                    <input className="bg-bg text-parchment border border-gold/30 rounded px-3 py-2 w-full" 
+                    type="date" 
+                    value={dateOfBirth} 
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    />
+                    <button className="bg-gold text-bg font-bold py-2 rounded hover:brightness-110 w-full" type="submit">Register</button>
+                </form>
+            </div>
         </div>
     )
 }
