@@ -20,7 +20,7 @@ function CreateCharacterPage() {
                 return
             }
             if (!name.trim()) {
-                setError("Please enter a chracter name.")
+                setError("Please enter a character name.")
                 return
             }
             try {

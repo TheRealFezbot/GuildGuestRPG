@@ -2,7 +2,9 @@ from pydantic import BaseModel, field_validator
 from datetime import datetime
 from uuid import UUID
 
+from app.core.constants import MIN_CHARACTER_NAME_LENGTH, MAX_CHARACTER_NAME_LENGTH
 from app.models.character import ClassType
+from app.core.security import validate_name
 
 class CharacterCreate(BaseModel):
     name: str
@@ -10,10 +12,8 @@ class CharacterCreate(BaseModel):
 
     @field_validator("name")
     @classmethod
-    def name_must_not_be_empty(cls, v):
-        if not v.strip():
-            raise ValueError("Name cannot be empty.")
-        return v.strip()
+    def validate_character_name(cls, v):
+        return validate_name(v, MIN_CHARACTER_NAME_LENGTH, MAX_CHARACTER_NAME_LENGTH, "Character Name")
 
 class CharacterResponse(BaseModel):
     model_config = {"from_attributes": True}

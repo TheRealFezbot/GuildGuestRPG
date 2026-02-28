@@ -1,6 +1,8 @@
+from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
 from jose import jwt
-from datetime import datetime, timedelta, timezone
+import re
+
 from app.core.config import settings
 from app.core.constants import ALLOWED_SPECIAL_CHARS
 
@@ -40,4 +42,14 @@ def validate_password_strength(v: str) -> str:
         raise ValueError("Password must include at least 1 number.")
     if not any(c in ALLOWED_SPECIAL_CHARS for c in v):
         raise ValueError("Password must include at least 1 special character.")
+    return v
+
+def validate_name(v: str, min_length: int, max_length: int, field_label: str) -> str:
+    v = v.strip()
+    if len(v) < min_length:
+        raise ValueError(f"{field_label} must be at least {min_length} characters.")
+    if len(v) > max_length:
+        raise ValueError(f"{field_label} must be at most {max_length} characters.")
+    if not re.match(r'^[a-zA-Z0-9]+$', v):
+        raise ValueError(f"{field_label} can only contain letters and numbers.")
     return v

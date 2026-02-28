@@ -1,7 +1,9 @@
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, field_validator, Field
 from datetime import date, datetime
 from uuid import UUID
-from app.core.security import validate_password_strength
+
+from app.core.constants import MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH
+from app.core.security import validate_password_strength, validate_name
 
 
 
@@ -10,6 +12,12 @@ class UserRegister(BaseModel):
     username: str
     password: str
     date_of_birth: date
+
+    @field_validator("username")
+    @classmethod
+    def validate_username(cls, v):
+        return validate_name(v, MIN_USERNAME_LENGTH, MAX_USERNAME_LENGTH, "Username")
+
 
     @field_validator("password")
     @classmethod
