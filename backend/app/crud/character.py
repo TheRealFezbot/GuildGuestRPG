@@ -1,30 +1,9 @@
 from sqlalchemy.orm import Session
-
 from app.core.enums import ClassType
+from app.core.constants import BASE_STATS
 from app.models.character import Character
 
-BASE_STATS = {
-    ClassType.warrior: {
-        "hp": 120,
-        "attack": 10,
-        "defense": 8,
-    },
-    ClassType.mage: {
-        "hp": 80,
-        "attack": 15,
-        "defense": 4,
-    },
-    ClassType.rogue: {
-        "hp": 100,
-        "attack": 12,
-        "defense": 5,
-    },
-    ClassType.ranger: {
-        "hp": 100,
-        "attack": 11,
-        "defense": 6,
-    },
-}
+
 
 def create_character(db: Session, user_id: str, name: str, class_type: ClassType):
     hp = BASE_STATS[class_type]["hp"]

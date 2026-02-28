@@ -8,6 +8,7 @@ from app.schemas.auth import UserRegister, UserLogin, TokenRefresh, TokenRespons
 from app.core.security import hash_password, validate_password, create_access_token, create_refresh_token, decode_token
 from app.services.email import send_verification_email, send_reset_email
 from app.core.dependencies import get_current_user
+from app.core.constants import MIN_AGE
 from app.core.database import get_db
 
 
@@ -18,7 +19,7 @@ async def register(data: UserRegister, db: Session = Depends(get_db)):
     today = date.today()
     age = today.year - data.date_of_birth.year - ((today.month, today.day) < (data.date_of_birth.month, data.date_of_birth.day))
 
-    if age < 13:
+    if age < MIN_AGE:
         raise HTTPException(status_code=400, detail="You must be at least 13 years old to register.")
     
     if get_user_by_email(db, data.email):

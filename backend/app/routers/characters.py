@@ -30,3 +30,7 @@ async def get_character(character_id: str, db: Session = Depends(get_db)):
     
     return character
 
+@router.get("/classes")
+def get_class_stats():
+    return BASE_STATS
+

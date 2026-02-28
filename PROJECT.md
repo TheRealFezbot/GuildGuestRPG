@@ -1019,12 +1019,12 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [ ] Return stamina + time until next stamina point in character API responses
   - [ ] Frontend: stamina bar display with current/max and time-to-next-point countdown
 
-- [ ] **Frontend foundation**
-  - [x] Set up React Router with route structure (/login, /register — more routes to come)
+- [x] **Frontend foundation**
+  - [x] Set up React Router with route structure (/login, /register, /auth/verify, / — more routes to come)
   - [x] Create auth context/store (JWT storage in localStorage, login/logout, session restore on load)
-  - [ ] Create protected route wrapper (redirect to /login if not authenticated)
-  - [ ] Build landing page with game intro and register CTA
-  - [x] Build login and register forms with validation
+  - [x] Create protected route wrapper (redirect to /login if not authenticated)
+  - [x] Build email verification page (/auth/verify — reads token from URL, calls API on mount)
+  - [x] Build login and register forms with validation and Tailwind styling (gold/brown/bordeaux palette)
   - [ ] Build main game layout shell (sidebar nav, content area, stamina bar)
   - [x] Set up API client (axios with JWT interceptor, proxy to backend via Vite)
 
