@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { verifyEmail } from "../api/auth";
+import { verifyEmail } from "../../api/auth";
 
 function VerifyPage() {
     const [isVerified, setIsVerified] = useState<boolean>(false)

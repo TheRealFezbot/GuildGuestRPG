@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from app.core.enums import ClassType
 from app.core.constants import BASE_STATS
 from app.models.character import Character
+from app.core.game import calculate_power_level
 
 
 
@@ -18,7 +19,7 @@ def create_character(db: Session, user_id: str, name: str, class_type: ClassType
         max_hp = hp,
         attack = attack,
         defense = defense,
-        power_level = 10 + attack + defense + hp / 2 
+        power_level = calculate_power_level(hp, attack, defense) 
     )
     db.add(character)
     db.commit()

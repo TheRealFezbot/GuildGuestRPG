@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 
 function LoginPage() {
@@ -54,6 +54,7 @@ function LoginPage() {
                     />
                     <button className="bg-gold text-bg font-bold py-2 rounded hover:brightness-110 w-full" type="submit">Login</button>
                 </form>
+                <Link to="/auth/forgot-password" className="text-gold/70 text-sm text-center hover:text-gold">Forgot password?</Link>
             </div>
         </div>
     )

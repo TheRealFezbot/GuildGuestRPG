@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createCharacter, getClassStats } from "../api/characters";
+import { createCharacter, getClassStats } from "../../api/characters";
 
 function CreateCharacterPage() {
     const [ name, setName ] = useState("")

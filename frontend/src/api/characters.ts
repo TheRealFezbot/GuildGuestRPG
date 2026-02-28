@@ -8,3 +8,8 @@ export const getClassStats = async () => {
     const res = await client.get("/characters/classes")
     return res.data
 }
+
+export const getMyCharacter = async () => {
+    const res = await client.get('/characters/me')
+    return res.data
+}
