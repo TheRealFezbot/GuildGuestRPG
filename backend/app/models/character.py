@@ -15,7 +15,6 @@ class Character(Base):
         CheckConstraint("hp >= 0", name="check_hp_non_negative"),
         CheckConstraint("hp <= max_hp", name="check_hp_max"),
         CheckConstraint("pvp_tokens >= 0", name="check_pvp_tokens_non_negative"),
-        CheckConstraint("pvp_rating >= 0", name="check_pvp_rating_non_negative"),
         CheckConstraint("level >= 1", name="check_level_min"),
         CheckConstraint("xp >= 0", name="check_xp_non_negative"),
         # TODO: Add a max_level constraint once max level has been decided

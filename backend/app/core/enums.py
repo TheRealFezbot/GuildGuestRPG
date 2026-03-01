@@ -15,7 +15,10 @@ class ItemRarity(Enum):
 
 class ItemType(Enum):
     weapon = "weapon"
-    armor = "armor"
+    head = "head"
+    chest = "chest"
+    legs = "legs"
+    offhand = "offhand"
     accessory = "accessory"
 
 class PotionType(Enum):
