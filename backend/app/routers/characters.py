@@ -21,7 +21,11 @@ async def create(data: CharacterCreate, db: Session = Depends(get_db), current_u
 
 @router.get("/me", response_model=CharacterResponse)
 async def get_me(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return get_character_by_user_id(db, current_user.id)
+    character = get_character_by_user_id(db, current_user.id)
+    if not character:
+        raise HTTPException(status_code=404, detail="No character found")
+    
+    return character
 
 @router.get("/classes")
 def get_class_stats():

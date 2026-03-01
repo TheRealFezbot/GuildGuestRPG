@@ -2,12 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.routers import auth, characters
+from app.routers import auth, characters, zones
 
 
 app = FastAPI()
 app.include_router(auth.router)
 app.include_router(characters.router)
+app.include_router(zones.router)
 
 origins = settings.cors_origins
 
