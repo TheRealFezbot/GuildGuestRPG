@@ -27,6 +27,7 @@ function NavBar() {
                     <span className="text-parchment/30 cursor-not-allowed">Inventory</span>
                     <span className="text-parchment/30 cursor-not-allowed">PvP</span>
                     <span className="text-parchment/30 cursor-not-allowed">Guild</span>
+                    <span className="text-parchment/30 cursor-not-allowed">Leaderboards</span>
                 </div>
 
                 {/* USERNAME/LOGOUT (HAMBURGER) */}
@@ -49,6 +50,7 @@ function NavBar() {
                     <span className="text-parchment/30 cursor-not-allowed">Inventory</span>
                     <span className="text-parchment/30 cursor-not-allowed">PvP</span>
                     <span className="text-parchment/30 cursor-not-allowed">Guild</span>
+                    <span className="text-parchment/30 cursor-not-allowed">Leaderboards</span>
                 </div>
             )}
         </nav>

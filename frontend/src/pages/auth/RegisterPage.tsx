@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { register } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext";
 
@@ -82,13 +82,17 @@ function RegisterPage() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm password" 
                     />
-                    <input className="bg-bg text-parchment border border-gold/30 rounded px-3 py-2 w-full" 
-                    type="date" 
-                    value={dateOfBirth} 
-                    onChange={(e) => setDateOfBirth(e.target.value)}
-                    />
+                    <label className="flex flex-col gap-1">
+                        <span className="text-parchment/50 text-xs">Date of Birth</span>
+                        <input className="bg-bg text-parchment border border-gold/30 rounded px-3 py-2 w-full"
+                        type="date"
+                        value={dateOfBirth}
+                        onChange={(e) => setDateOfBirth(e.target.value)}
+                        />
+                    </label>
                     <button className="bg-gold text-bg font-bold py-2 rounded hover:brightness-110 w-full" type="submit">Register</button>
                 </form>
+                <p className="text-parchment/50 text-sm text-center">Already have an account? <Link to="/login" className="text-gold/70 hover:text-gold">Login</Link></p>
             </div>
         </div>
     )

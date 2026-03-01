@@ -7,8 +7,19 @@ function ForgotPasswordPage() {
 
     const handleSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault()
-        await requestPasswordReset(email)
-        setMessage("Check your email for a reset link")
+        try {
+            await requestPasswordReset(email)
+            setMessage("Check your email for a reset link")
+        } catch (err: any) {
+                const detail = err.response?.data?.detail
+                if (typeof detail === "string") {
+                    setMessage(detail)
+                } else if (Array.isArray(detail) && detail.length > 0) {
+                    setMessage(detail[0].msg)
+                } else {
+                    setMessage("Something went wrong, try again.")
+                }
+            } 
     }
 
     return (

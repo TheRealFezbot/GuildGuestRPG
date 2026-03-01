@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createCharacter, getClassStats } from "../../api/characters";
+import { createCharacter, getClassStats, getMyCharacter } from "../../api/characters";
 
 function CreateCharacterPage() {
     const [ name, setName ] = useState("")
@@ -10,6 +10,10 @@ function CreateCharacterPage() {
     const [classStats, setClassStats] = useState<Record<string, { hp: number; attack: number; defense: number }> | null>(null)
 
     useEffect(() => {
+        getMyCharacter()
+        .then(() => navigate("/"))
+        .catch(() => {})
+
         getClassStats().then(data => setClassStats(data))
     }, [])
 
@@ -39,7 +43,7 @@ function CreateCharacterPage() {
         }
     
         return (
-            <div className="min-h-screen flex items-center justify-center bg-bg">
+            <div className="flex justify-center">
                 <div className="bg-surface p-8 rounded-lg w-full max-w-3xl flex flex-col gap-6">
                     <h1 className="text-gold text-2xl font-bold text-center">Create Your Character</h1>
                     <form onSubmit={handleSubmit} className="flex flex-col gap-8 w-full max-w-3xl">

@@ -619,7 +619,7 @@ points_gained = clamp(points_gained, 5, 50)
 - Password reset via email link
 
 ### Account Rules
-- **One character per account**
+- **One character slot per account** (additional slots unlockable via level milestone or monetization — no DB constraint)
 - Character name must be unique
 - Email must be unique
 
@@ -1003,7 +1003,7 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [x] `POST /characters` — validate name uniqueness, validate class enum (warrior/mage/rogue/ranger), set starting stats based on class table, create character linked to user
   - [x] Apply class-specific base stats: Warrior (120 HP, 10 ATK, 8 DEF), Mage (80/15/4), Rogue (100/12/5), Ranger (100/11/6)
   - [x] Set defaults: level 1, xp 0, gold 100, stamina 100
-  - [ ] Ensure one character per user (unique constraint on user_id)
+  - [ ] Frontend: prevent creating a second character until multi-character slots are unlocked (redirect to dashboard if character exists)
   - [x] Frontend: class selection screen with class descriptions, stat previews, and name input
 
 - [x] **Character stats view + power level calculation**

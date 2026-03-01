@@ -18,7 +18,7 @@ function LoginPage() {
             navigate("/")
         } catch (err: any) {
             const detail = err.response?.data?.detail
-            if (typeof detail =="string") {
+            if (typeof detail === "string") {
                 setError(detail)
             } else {
                 setError("Invalid credentials")
@@ -55,6 +55,7 @@ function LoginPage() {
                     <button className="bg-gold text-bg font-bold py-2 rounded hover:brightness-110 w-full" type="submit">Login</button>
                 </form>
                 <Link to="/auth/forgot-password" className="text-gold/70 text-sm text-center hover:text-gold">Forgot password?</Link>
+                <p className="text-parchment/50 text-sm text-center">Don't have an account? <Link to="/register" className="text-gold/70 hover:text-gold">Register</Link></p>
             </div>
         </div>
     )
