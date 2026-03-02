@@ -6,7 +6,9 @@ import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import VerifyPage from "./pages/auth/VerifyPage";
+import ZonesPage from "./pages/game/ZonesPage";
 import LoginPage from "./pages/auth/LoginPage";
+import ZonePage from "./pages/game/ZonePage";
 import HomePage from "./pages/game/HomePage";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -30,6 +32,8 @@ function App() {
             </ProtectedRoute>}>
             <Route path="/" element={<HomePage />} />
             <Route path="/character/create" element={<CreateCharacterPage />} />
+            <Route path="/zones/" element={<ZonesPage />} />
+            <Route path="/zones/:id" element={<ZonePage />} />
           </Route>
         </Routes>
       </AuthProvider>

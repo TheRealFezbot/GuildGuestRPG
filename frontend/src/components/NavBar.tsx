@@ -22,7 +22,7 @@ function NavBar() {
                 {/* NAV LINKS — desktop */}
                 <div className="hidden md:flex gap-6 text-sm">
                     <Link to="/" className="text-parchment hover:text-gold">Dashboard</Link>
-                    <span className="text-parchment/30 cursor-not-allowed">Zones</span>
+                    <Link to="/zones/" className="text-parchment hover:text-gold">Zones</Link>
                     <span className="text-parchment/30 cursor-not-allowed">Shop</span>
                     <span className="text-parchment/30 cursor-not-allowed">Inventory</span>
                     <span className="text-parchment/30 cursor-not-allowed">PvP</span>
@@ -45,7 +45,7 @@ function NavBar() {
             {menuOpen && (
                 <div className="md:hidden flex flex-col px-6 pb-4 gap-3 text-sm border-t border-gold/10">
                     <Link to="/" className="text-parchment hover:text-gold" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-                    <span className="text-parchment/30 cursor-not-allowed">Zones</span>
+                    <Link to="/zones/" className="text-parchment hover:text-gold">Zones</Link>
                     <span className="text-parchment/30 cursor-not-allowed">Shop</span>
                     <span className="text-parchment/30 cursor-not-allowed">Inventory</span>
                     <span className="text-parchment/30 cursor-not-allowed">PvP</span>

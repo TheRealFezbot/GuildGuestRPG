@@ -1,6 +1,16 @@
 from pydantic import BaseModel
 from uuid import UUID
 
+class MonsterLevelResponse(BaseModel):
+    model_config = {"from_attributes": True}
+    level: int
+    hp_multiplier: float
+    attack_multiplier: float
+    defense_multiplier: float
+    xp_multiplier: float
+    gold_multiplier: float
+    drop_chance_bonus: float
+
 class MonsterWithProgressResponse(BaseModel):
     model_config = {"from_attributes": True}
     id: UUID
@@ -17,3 +27,5 @@ class MonsterWithProgressResponse(BaseModel):
     highest_level_beaten: int = 0
     total_kills: int = 0
     is_unlocked: bool = False
+    levels: list[MonsterLevelResponse]
+
