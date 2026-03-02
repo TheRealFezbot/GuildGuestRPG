@@ -13,6 +13,7 @@ import HomePage from "./pages/game/HomePage";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import GameLayout from "./components/GameLayout";
+import CombatPage from "./pages/game/CombatPage";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
             <Route path="/character/create" element={<CreateCharacterPage />} />
             <Route path="/zones/" element={<ZonesPage />} />
             <Route path="/zones/:id" element={<ZonePage />} />
+            <Route path="/combat/:monsterId/:level" element={<CombatPage />} />
           </Route>
         </Routes>
       </AuthProvider>

@@ -2,15 +2,20 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import type { Character } from "../../types/characters"
 import { getMyCharacter } from "../../api/characters"
+import type { Zone } from "../../types/zones"
+import { getZones } from "../../api/zones"
 
 function HomePage() {
     const navigate = useNavigate()
     const [character, setCharacter] = useState<Character | null>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [zones, setZones] = useState<Zone[]>([])
 
     useEffect(() => {
         getMyCharacter()
         .then(data => setCharacter(data))
+        getZones()
+        .then(data => setZones(data))
         .catch(err => {
             if (err.response?.status === 404) {
                 navigate("/character/create")
@@ -82,7 +87,14 @@ function HomePage() {
                 {/* ZONE PROGRESS */}
                 <div className="bg-surface border border-gold/20 rounded-lg p-4 flex flex-col gap-3">
                     <h2 className="text-gold font-bold">Zone Progress</h2>
-                    <p className="text-parchment/30 text-sm">— Coming soon —</p>
+                    {zones.map(zone => (
+                        <div key={zone.id} className="flex justify-between text-sm">
+                            <span className="text-parchment">{zone.name}</span>
+                            <span className={zone.is_unlocked ? "text-green-400" : "text-parchment/30"}>
+                            {zone.is_unlocked ? "Unlocked" : "Locked"}
+                            </span>
+                        </div>
+                        ))}
                 </div>
 
             </div>

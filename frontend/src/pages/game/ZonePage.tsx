@@ -82,7 +82,13 @@ function ZonePage() {
                                 ))}
                             </div>
                             <div>
-                                <button className="bg-gold text-bg font-bold py-2 px-4 rounded hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!selectedLevels[monster.id]}>Fight</button>
+                                <button
+                                className="bg-gold text-bg font-bold py-2 px-4 rounded hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
+                                disabled={!selectedLevels[monster.id]}
+                                onClick={() => navigate(`/combat/${monster.id}/${selectedLevels[monster.id]}`)}
+                                >
+                                Fight
+                                </button>
                             </div>
                         </div>
                     )}
