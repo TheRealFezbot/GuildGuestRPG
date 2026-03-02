@@ -49,3 +49,6 @@ def get_character_by_name(db: Session, name: str):
 
 def get_character_by_user_id(db: Session, user_id: str):
     return db.query(Character).filter(Character.user_id == user_id).first()
+
+def get_character_by_user_id_locked(db: Session, user_id: str):
+    return db.query(Character).filter(Character.user_id == user_id).with_for_update().first()

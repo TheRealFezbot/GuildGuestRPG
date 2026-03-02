@@ -32,5 +32,8 @@ def get_monster_levels(db: Session, monster_id: str):
     return db.query(MonsterLevel)\
         .filter(MonsterLevel.monster_id == monster_id)\
         .order_by(MonsterLevel.level).all()
+
+def get_monster_by_id(db: Session, monster_id: str):
+    return db.query(Monster).filter(Monster.id == monster_id).first()
     
 
