@@ -12,6 +12,7 @@ MAX_USERNAME_LENGTH = 20
 MIN_CHARACTER_NAME_LENGTH = 3
 MAX_CHARACTER_NAME_LENGTH = 20
 
+
 BASE_STATS = {
     ClassType.warrior: {
         "hp": 120,
@@ -33,4 +34,11 @@ BASE_STATS = {
         "attack": 11,
         "defense": 6,
     },
+}
+
+STAT_GROWTH = {
+    ClassType.warrior: {"max_hp": 12, "attack": 2, "defense": 2},
+    ClassType.mage: {"max_hp": 6, "attack": 3, "defense": 1},
+    ClassType.rogue: {"max_hp": 8, "attack": 2, "defense": 1},
+    ClassType.ranger: {"max_hp": 10, "attack": 2, "defense": 1},
 }

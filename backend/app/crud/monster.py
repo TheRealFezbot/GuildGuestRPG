@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
 from app.models.monster import Monster
 from app.models.monster_level import MonsterLevel
@@ -36,4 +37,17 @@ def get_monster_levels(db: Session, monster_id: str):
 def get_monster_by_id(db: Session, monster_id: str):
     return db.query(Monster).filter(Monster.id == monster_id).first()
     
+def get_validated_zone_monster(db: Session, monster_id: str, character_id: str, level: int):
+    monster = get_monster_by_id(db, monster_id)
+    if not monster:
+        raise HTTPException(status_code=404, detail="Monster not found")
+    
+    zone_monsters = get_monsters_for_zone(db, str(monster.zone_id), character_id)
+    zone_monster = next((m for m in zone_monsters if m["id"] == monster.id), None)
 
+    if not zone_monster or not zone_monster["is_unlocked"]:
+        raise HTTPException(status_code=403, detail="Monster is locked")
+    if level < 1 or level > zone_monster["highest_level_beaten"] + 1:
+        raise HTTPException(status_code=400, detail="Level not available")
+    
+    return zone_monster
