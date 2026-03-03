@@ -9,6 +9,7 @@ from app.crud.combat import save_combat_result
 from app.core.game import get_current_stamina
 from app.schemas.combat import FightRequest
 from app.core.enums import CombatResult
+from app.core.redis import set_stamina
 from app.core.database import get_db
 from app.models.user import User
 
@@ -30,7 +31,9 @@ async def fight(request: FightRequest, db: Session = Depends(get_db), current_us
     
     result = simulate_combat(character, zone_monster, request.level)
     apply_combat_result(character, current_stamina, stamina_cost, result)
-
+    
+    set_stamina(character.id, character.stamina, character.stamina_updated_at)
+    
     combat_result = CombatResult.win if result["winner"] == "player" else CombatResult.lose
     save_combat_result(db, character.id, zone_monster["id"], request.level, combat_result, result)
 

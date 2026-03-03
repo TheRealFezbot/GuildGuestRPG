@@ -29,6 +29,7 @@ class CharacterResponse(BaseModel):
     defense: int
     power_level: int
     stamina: int
+    stamina_updated_at: datetime
     created_at: datetime
 
 class CharacterPublic(BaseModel):

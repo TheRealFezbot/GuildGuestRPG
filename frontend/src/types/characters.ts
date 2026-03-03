@@ -11,4 +11,5 @@ export interface Character {
     defense: number
     power_level: number
     stamina: number
+    stamina_updated_at: string
 }

@@ -9,11 +9,15 @@ function HomePage() {
     const navigate = useNavigate()
     const [character, setCharacter] = useState<Character | null>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [displayStamina, setDisplayStamina] = useState<number | null>(0)
     const [zones, setZones] = useState<Zone[]>([])
 
     useEffect(() => {
         getMyCharacter()
-        .then(data => setCharacter(data))
+        .then(data => {
+            setCharacter(data)
+            setDisplayStamina(data.stamina)
+        }) 
         getZones()
         .then(data => setZones(data))
         .catch(err => {
@@ -24,6 +28,16 @@ function HomePage() {
         .finally(() => setIsLoading(false))
     }, [])
 
+    useEffect(() => {
+        if (!character) return
+        const interval = setInterval(() => {
+            const updatedAt = new Date(character.stamina_updated_at)
+            const minutesSince = (Date.now() - updatedAt.getTime()) / 60000
+            const regen = Math.floor(minutesSince / 3)
+            setDisplayStamina(Math.min(100, character.stamina + regen))
+        }, 60000)
+        return () => clearInterval(interval)
+    }, [character])
     
     if (isLoading) return <p className="text-parchment">Loading...</p>
     if (!character) return null
@@ -59,7 +73,7 @@ function HomePage() {
                     </div>
                     <div className="flex justify-between text-parchment text-sm">
                         <span>Stamina</span>
-                        <span className="font-bold">{character.stamina}</span>
+                        <span className="font-bold">{displayStamina}</span>
                     </div>
                     <div className="flex justify-between text-parchment text-sm">
                         <span>Attack</span>
@@ -111,7 +125,10 @@ function HomePage() {
                     </div>
                     <div className="flex justify-between text-parchment text-sm">
                         <span>XP</span>
-                        <span className="font-bold">{character.xp}</span>
+                        <span className="font-bold">{character.xp} / {Math.round(100 * Math.pow(character.level, 1.5))}</span>
+                    </div>
+                    <div className="bg-bg rounded-full h-2">
+                        <div className="bg-emerald-700 h-2 rounded-full" style={{ width: `${(character.xp / Math.round(100 * Math.pow(character.level, 1.5))) * 100}%` }} />
                     </div>
                 </div>
 

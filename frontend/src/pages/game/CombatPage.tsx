@@ -15,6 +15,7 @@ function CombatPage() {
     const [monster, setMonster] = useState<Monster | null>(null)
     const [character, setCharacter] = useState<Character | null>(null)
     const [combatResult, setCombatResult] = useState<CombatResult | null>(null)
+    const [levelsGained, setLevelsGained] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -39,16 +40,21 @@ function CombatPage() {
     }, [monsterId, level])
 
     const handleFight = async () => {
+        setLevelsGained(0)
         setIsLoading(true)
         setError(null)
+        const levelBefore = character?.level ?? 0
         fight(monsterId!, parseInt(level!))
         .then(data => {
             setCombatResult(data)
             getMonster(monsterId!)
                 .then(m => setMonster(m))
             getMyCharacter()
-                .then(c => setCharacter(c))
-    })
+                .then(c => {
+                    if (c.level > levelBefore) setLevelsGained(c.level - levelBefore)
+                    setCharacter(c)
+            })
+        })
         .catch((err) => {
             setError(err.response?.data?.detail || "Couldn't load fight")
         })
@@ -94,6 +100,11 @@ function CombatPage() {
                         </div>
                     </div>
                     {/* RESULT BANNER & BUTTONS */}
+                    {levelsGained > 0 && (
+                        <div className="border border-gold rounded p-3 text-center bg-gold/10 text-gold font-bold text-lg">
+                            LEVEL UP! You are now level {character?.level}
+                        </div>
+                    )}
                     {combatResult && (
                         <div className={`border rounded p-3 text-center font-bold text-xl ${combatResult.winner === "player" 
                         ? "bg-green-900/50 border-green-500 text-green-400" 
