@@ -5,7 +5,7 @@ from app.models.character import Character
 # CHARACTERS
 
 def calculate_power_level(hp: int, attack: int, defense: int) -> int:
-    return 10 + attack + defense + hp // 2
+    return 10 + attack * 2 + defense + hp // 3
 
 def xp_for_next_level(level: int) -> int:
     return round(100 * (level ** 1.5)) 

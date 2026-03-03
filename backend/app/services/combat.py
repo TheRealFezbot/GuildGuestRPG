@@ -1,6 +1,8 @@
 import random
 
 from app.models.character import Character
+from app.core.game import calculate_power_level
+from app.core.enums import ClassType
 
 def clamp(value, min_val, max_val):
     return max(min_val, min(max_val, value))
@@ -16,15 +18,25 @@ def simulate_combat(character: Character, monster: dict, level_num: int) -> dict
         "defense": monster["base_defense"] * level_data.defense_multiplier,
     }
 
+    monster_power = calculate_power_level(
+        round(scaled_monster_stats["hp"]),
+        round(scaled_monster_stats["attack"]),
+        round(scaled_monster_stats["defense"]),
+    )
+
     player_hp = character.max_hp
-    crit_chance = 0.10
+    crit_cap = 0.50 if character.class_type == ClassType.rogue else 0.40
+    crit_chance = clamp(0.10 + character.crit_bonus, 0, crit_cap)
     base_damage = max(1, character.attack - (scaled_monster_stats["defense"] / 2))
-    hit_chance = clamp(0.85 + (character.level - level_num) * 0.03, 0.50, 0.95)
-    dodge_chance = clamp(0.05 + (character.defense / 200), 0.05, 0.20)
+    dodge_cap = 0.40 if character.class_type == ClassType.rogue else 0.35
+    dodge_chance = clamp(0.05 + (character.defense / 200) + character.dodge_bonus, 0.05, dodge_cap)
+    
+    ratio = character.power_level / max(monster_power, 1)
+    hit_chance = clamp(0.85 + (ratio - 1) * 0.1, 0.50, 0.95)
+    monster_hit_chance = clamp(0.85 - (ratio - 1) * 0.1, 0.50, 0.95)
     
     monster_hp = round(scaled_monster_stats["hp"])
     monster_base_damage = max(1, scaled_monster_stats["attack"] - (character.defense / 2))
-    monster_hit_chance = clamp(0.85 + (level_num - character.level) * 0.03, 0.50, 0.95)
     monster_dodge_chance = clamp(0.05 + (scaled_monster_stats["defense"] / 200), 0.05, 0.20)
     
     log = []

@@ -15,7 +15,8 @@ def create_character(db: Session, user_id: str, name: str, class_type: ClassType
     hp = BASE_STATS[class_type]["hp"]
     attack = BASE_STATS[class_type]["attack"]
     defense = BASE_STATS[class_type]["defense"]
-    
+    crit_bonus = BASE_STATS[class_type]["crit_bonus"]
+    dodge_bonus = BASE_STATS[class_type]["dodge_bonus"]
     
     char_id = uuid.uuid4()
     character = Character(
@@ -27,6 +28,8 @@ def create_character(db: Session, user_id: str, name: str, class_type: ClassType
         max_hp = hp,
         attack = attack,
         defense = defense,
+        crit_bonus = crit_bonus,
+        dodge_bonus = dodge_bonus,
         power_level = calculate_power_level(hp, attack, defense) 
     )
     zone = db.query(Zone).filter(Zone.order == 1).first()

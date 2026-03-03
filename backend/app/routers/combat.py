@@ -22,12 +22,13 @@ async def fight(request: FightRequest, db: Session = Depends(get_db), current_us
     if not character:
         raise HTTPException(status_code=404, detail="Character not found")
 
+    zone_monster = get_validated_zone_monster(db, request.monster_id, character.id, request.level)
+    
     current_stamina = get_current_stamina(character)
-    stamina_cost = 5 # TODO: 10 for boss
+    stamina_cost = 10 if zone_monster["is_zone_boss"] else 5
     if current_stamina < stamina_cost:
         raise HTTPException(status_code=400, detail="Not enough stamina")
 
-    zone_monster = get_validated_zone_monster(db, request.monster_id, character.id, request.level)
     
     result = simulate_combat(character, zone_monster, request.level)
     apply_combat_result(character, current_stamina, stamina_cost, result)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum, CheckConstraint
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum, CheckConstraint, Float
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, timezone
 from app.core.enums import ClassType
@@ -31,6 +31,8 @@ class Character(Base):
     max_hp = Column(Integer, nullable=False)
     attack = Column(Integer, nullable=False)
     defense = Column(Integer, nullable=False)
+    crit_bonus = Column(Float, default=0.0, nullable=False)
+    dodge_bonus = Column(Float, default=0.0, nullable=False)
     power_level = Column(Integer, nullable=False)
     stamina = Column(Integer, default=100, nullable=False)
     stamina_updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)

@@ -18,12 +18,12 @@ function HomePage() {
             setCharacter(data)
             setDisplayStamina(data.stamina)
         }) 
-        getZones()
-        .then(data => setZones(data))
         .catch(err => {
             if (err.response?.status === 404) {
                 navigate("/character/create")
             }
+        getZones()
+        .then(data => setZones(data))
         })
         .finally(() => setIsLoading(false))
     }, [])
