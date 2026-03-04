@@ -1,7 +1,16 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { getZoneMonsters } from "../../api/zones";
 import { useState, useEffect } from "react";
-import type { Monster } from "../../types/zones";
+import type { Monster, MonsterLevel } from "../../types/zones";
+
+function getScaledPowerLevel(monster: Monster, levelData: MonsterLevel | undefined): number {
+    return Math.round(
+        10 
+        + monster.base_attack * (levelData?.attack_multiplier ?? 1) * 2
+        + monster.base_defense * (levelData?.defense_multiplier ?? 1) 
+        + Math.floor((monster.base_hp * (levelData?.hp_multiplier ?? 1)) / 3)
+    )
+}
 
 function ZonePage() {
     const { id } = useParams()
@@ -13,6 +22,7 @@ function ZonePage() {
     const [error, setError] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
 
+    
     useEffect(() => {
         if (!id) {
             setError("Invalid zone")
@@ -26,7 +36,8 @@ function ZonePage() {
         })
         .finally(() => setIsLoading(false))
     }, [])
-
+    
+    
     if (isLoading) return <p className="text-parchment">Loading...</p>
     if (error) return (
         <div>
@@ -40,21 +51,17 @@ function ZonePage() {
             {monsters.map(monster => {
                 const selectedLevel = selectedLevels[monster.id] ?? 1
                 const levelData = monster.levels.find(l => l.level === selectedLevel)
-                const powerLevel = Math.round(
-                    10 
-                    + monster.base_attack * (levelData?.attack_multiplier ?? 1) 
-                    + monster.base_defense * (levelData?.defense_multiplier ?? 1) 
-                    + Math.floor((monster.base_hp * (levelData?.hp_multiplier ?? 1)) / 2)
-                )
-
+                const powerLevel = getScaledPowerLevel(monster, levelData)
                 const isExpanded = expandedId === monster.id
-
-            return (
-                <div
+                const cardClass = monster.is_unlocked 
+                    ? "bg-surface border border-gold/20 rounded-lg p-4 cursor-pointer"
+                    : "bg-surface border border-gold/20 rounded-lg p-4 opacity-50 cursor-not-allowed"
+                return (
+                    <div
                     key={monster.id}
-                    className={monster.is_unlocked ? "bg-surface border border-gold/20 rounded-lg p-4 cursor-pointer" : "bg-surface border border-gold/20 rounded-lg p-4 opacity-50 cursor-not-allowed"}
+                    className={cardClass}
                     onClick={monster.is_unlocked ? () => setExpandedId(isExpanded ? null : monster.id) : undefined}
-                >
+                    >
                     <h2>{monster.name}</h2>
                     <p>Power Level: {powerLevel}</p>
                     <p>Progress: {monster.highest_level_beaten}/5</p>
@@ -68,7 +75,7 @@ function ZonePage() {
                                     className={`bg-bg border rounded-lg px-3 py-1 text-parchment text-sm
                                         ${selectedLevels[monster.id] === level.level ? "border-gold" : "border-gold/30"}
                                         ${level.level > monster.highest_level_beaten + 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                                    >
+                                        >
                                         <input
                                         className="sr-only"
                                         type="radio"

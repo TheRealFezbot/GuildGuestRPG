@@ -22,6 +22,7 @@ def _update_monster_progress(db: Session, character_id: str, monster_id: str, le
                 highest_level_beaten=level_beaten, 
                 total_kills=1))
     elif not progress:
+        # create an empty progress row on first attempt so losses can be tracked later
         db.add(MonsterProgress(character_id=character_id, monster_id=monster_id))
 
 def _create_combat_log(db: Session, character_id: str, monster_id: str, level: int, combat_result: CombatResult, result: dict):

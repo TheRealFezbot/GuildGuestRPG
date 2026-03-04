@@ -21,7 +21,7 @@ class UserRegister(BaseModel):
 
     @field_validator("password")
     @classmethod
-    def validate_password_strength(cls, v):
+    def check_password_strength(cls, v):
         return validate_password_strength(v)
     
 class UserLogin(BaseModel):
@@ -54,5 +54,5 @@ class PasswordReset(BaseModel):
 
     @field_validator("new_password")
     @classmethod
-    def validate_password_strength(cls, v):
+    def check_password_strength(cls, v):
         return validate_password_strength(v)

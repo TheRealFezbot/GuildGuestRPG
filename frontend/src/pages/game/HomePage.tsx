@@ -12,6 +12,7 @@ function HomePage() {
     const [displayStamina, setDisplayStamina] = useState<number | null>(0)
     const [zones, setZones] = useState<Zone[]>([])
 
+    
     useEffect(() => {
         getMyCharacter()
         .then(data => {
@@ -22,25 +23,27 @@ function HomePage() {
             if (err.response?.status === 404) {
                 navigate("/character/create")
             }
+        })
         getZones()
         .then(data => setZones(data))
-        })
         .finally(() => setIsLoading(false))
     }, [])
 
+    // recalculate stamina client-side every minute so the display stays accurate without polling the server
     useEffect(() => {
         if (!character) return
         const interval = setInterval(() => {
             const updatedAt = new Date(character.stamina_updated_at)
             const minutesSince = (Date.now() - updatedAt.getTime()) / 60000
-            const regen = Math.floor(minutesSince / 3)
+            const regen = Math.floor(minutesSince / 3) * 5
             setDisplayStamina(Math.min(100, character.stamina + regen))
         }, 60000)
         return () => clearInterval(interval)
     }, [character])
-    
+
     if (isLoading) return <p className="text-parchment">Loading...</p>
     if (!character) return null
+    const xpToNextLevel = Math.round(100 * Math.pow(character.level, 1.5))
 
     return (
         <div className="flex flex-col gap-6">
@@ -125,10 +128,10 @@ function HomePage() {
                     </div>
                     <div className="flex justify-between text-parchment text-sm">
                         <span>XP</span>
-                        <span className="font-bold">{character.xp} / {Math.round(100 * Math.pow(character.level, 1.5))}</span>
+                        <span className="font-bold">{character.xp} / {xpToNextLevel}</span>
                     </div>
                     <div className="bg-bg rounded-full h-2">
-                        <div className="bg-emerald-700 h-2 rounded-full" style={{ width: `${(character.xp / Math.round(100 * Math.pow(character.level, 1.5))) * 100}%` }} />
+                        <div className="bg-emerald-700 h-2 rounded-full" style={{ width: `${(character.xp / xpToNextLevel) * 100}%` }} />
                     </div>
                 </div>
 

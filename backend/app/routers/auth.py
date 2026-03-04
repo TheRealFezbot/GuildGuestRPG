@@ -14,6 +14,22 @@ from app.core.database import get_db
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+def get_user_from_typed_token(token: str, expected_type: str, db: Session):
+    try:
+        payload = decode_token(token)
+    except JWTError:
+        raise HTTPException(status_code=400, detail="Invalid token")
+    
+    if payload.get("type") != expected_type:
+        raise HTTPException(status_code=400, detail="Invalid token")
+    
+    user = get_user_by_id(db, payload["sub"])
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid token")
+    
+    return user
+
+
 @router.post("/register")
 async def register(data: UserRegister, db: Session = Depends(get_db)):
     today = date.today()
@@ -42,18 +58,7 @@ async def register(data: UserRegister, db: Session = Depends(get_db)):
 
 @router.get("/verify")
 async def verify(token: str, db: Session = Depends(get_db)):
-    try:
-        payload = decode_token(token)
-    except JWTError:
-        raise HTTPException(status_code=400, detail="Invalid token")
-    
-    if not payload.get("type") == "verify":
-        raise HTTPException(status_code=400, detail="Invalid token")
-    
-    user = get_user_by_id(db, payload["sub"])
-    
-    if not user:
-        raise HTTPException(status_code=400, detail="Invalid token")
+    user = get_user_from_typed_token(token, "verify", db)
 
     verify_user(db, user)
     return {"message": "Email verified successfully."}
@@ -106,17 +111,7 @@ async def forgot_password(data: PasswordResetRequest, db: Session = Depends(get_
 
 @router.post("/reset-password")
 async def reset_password(data: PasswordReset, db: Session = Depends(get_db)):
-    try:
-        payload = decode_token(data.token)
-    except JWTError:
-        raise HTTPException(status_code=400, detail="Invalid token")
-    
-    if not payload.get("type") == "reset":
-        raise HTTPException(status_code=400, detail="Invalid token")
-    
-    user = get_user_by_id(db, payload["sub"])
-    if not user:
-        raise HTTPException(status_code=400, detail="Invalid token")
+    user = get_user_from_typed_token(data.token, "reset", db)
     
     new_hashed_password = hash_password(data.new_password)
 

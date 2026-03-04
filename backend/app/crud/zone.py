@@ -17,4 +17,4 @@ def get_zones_for_character(db: Session, character_id: str):
     return result
 
 def get_zone_progress(db: Session, zone_id: str, character_id: str):
-    return db.query(ZoneProgress).filter(ZoneProgress.zone_id == zone_id).filter(ZoneProgress.character_id == character_id).first()
+    return db.query(ZoneProgress).filter(ZoneProgress.zone_id == zone_id, ZoneProgress.character_id == character_id).first()

@@ -4,19 +4,21 @@ from fastapi import HTTPException
 from app.models.monster import Monster
 from app.models.monster_level import MonsterLevel
 from app.models.monster_progress import MonsterProgress
+from app.core.constants import MONSTER_UNLOCK_THRESHOLD
 
 def get_monsters_for_zone(db: Session, zone_id: str, character_id: str):
     monsters = db.query(Monster, MonsterProgress)\
         .outerjoin(MonsterProgress, (MonsterProgress.monster_id == Monster.id) & (MonsterProgress.character_id == character_id))\
         .filter(Monster.zone_id == zone_id).order_by(Monster.order_in_zone).all()
     result = []
-    prev_highest = 0
+    prev_highest = 0  # tracks previous monster's highest beaten level to determine if the next one is unlocked
     for monster, progress in monsters:
         levels_list = get_monster_levels(db, monster.id)
+        # first monster in the zone is always unlocked, rest require beating the previous one to level 3+
         if monster.order_in_zone == 1:
             is_unlocked = True
         else:
-            is_unlocked = prev_highest >= 3
+            is_unlocked = prev_highest >= MONSTER_UNLOCK_THRESHOLD
             
         monster_data = {k: v for k, v in monster.__dict__.items() if not k.startswith("_")}
         monster_data["highest_level_beaten"] = progress.highest_level_beaten if progress else 0

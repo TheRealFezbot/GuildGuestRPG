@@ -26,3 +26,13 @@ STAT_GROWTH = {
     ClassType.rogue: {"max_hp": 8, "attack": 2, "defense": 1},
     ClassType.ranger: {"max_hp": 10, "attack": 2, "defense": 1},
 }
+
+# STAMINA
+MAX_STAMINA = 100
+STAMINA_REGEN_MINUTES = 3 
+STAMINA_REGEN_AMOUNT = 5
+STAMINA_COST = 5
+STAMINA_COST_BOSS = 10
+
+# MONSTERS
+MONSTER_UNLOCK_THRESHOLD = 3 # Highest level beaten needed to unlock the next monster

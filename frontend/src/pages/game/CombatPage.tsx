@@ -43,10 +43,12 @@ function CombatPage() {
         setLevelsGained(0)
         setIsLoading(true)
         setError(null)
+        // capture level before the fight so we can detect level ups after the result comes back
         const levelBefore = character?.level ?? 0
         fight(monsterId!, parseInt(level!))
         .then(data => {
             setCombatResult(data)
+            // re-fetch monster and character to get updated kills, progress, and level
             getMonster(monsterId!)
                 .then(m => setMonster(m))
             getMyCharacter()

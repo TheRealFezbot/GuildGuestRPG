@@ -27,10 +27,14 @@ async def get_me(db: Session = Depends(get_db), current_user: User = Depends(get
     character = get_character_by_user_id(db, current_user.id)
     if not character:
         raise HTTPException(status_code=404, detail="No character found")
+    
     cached = get_stamina(character.id)
     if cached:
+        # use Redis values for the base so regen is calculated from the latest snapshot
         character.stamina = cached["stamina"]
         character.stamina_updated_at = datetime.fromisoformat(cached["updated_at"])
+    # always recalculate. adds regen since stamina_updated_at 
+    # (cache or database, whichever is available)
     character.stamina = get_current_stamina(character)
 
     return character

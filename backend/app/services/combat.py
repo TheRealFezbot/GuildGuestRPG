@@ -12,6 +12,7 @@ def simulate_combat(character: Character, monster: dict, level_num: int) -> dict
     if not level_data:
         raise ValueError(f"Level {level_num} not found for monster")
     
+    # scale base stats by the level multipliers (levels 1-5 make the monster progressively stronger)
     scaled_monster_stats = {
         "hp": monster["base_hp"] * level_data.hp_multiplier,
         "attack": monster["base_attack"] * level_data.attack_multiplier,
@@ -25,12 +26,15 @@ def simulate_combat(character: Character, monster: dict, level_num: int) -> dict
     )
 
     player_hp = character.max_hp
+    # rogue gets higher crit and dodge caps as a class passive
     crit_cap = 0.50 if character.class_type == ClassType.rogue else 0.40
     crit_chance = clamp(0.10 + character.crit_bonus, 0, crit_cap)
     base_damage = max(1, character.attack - (scaled_monster_stats["defense"] / 2))
     dodge_cap = 0.40 if character.class_type == ClassType.rogue else 0.35
     dodge_chance = clamp(0.05 + (character.defense / 200) + character.dodge_bonus, 0.05, dodge_cap)
-    
+
+    # hit chance scales with the power level ratio - ratio > 1 means we outpower the monster
+    # stronger character hits more often and is harder to hit back
     ratio = character.power_level / max(monster_power, 1)
     hit_chance = clamp(0.85 + (ratio - 1) * 0.1, 0.50, 0.95)
     monster_hit_chance = clamp(0.85 - (ratio - 1) * 0.1, 0.50, 0.95)
@@ -48,7 +52,7 @@ def simulate_combat(character: Character, monster: dict, level_num: int) -> dict
     while player_hp > 0 and monster_hp > 0:
         turn += 1
         
-        # Player attack
+        # player attack
         if random.random() > hit_chance:
             log.append(f"Turn {turn}: {character.name} misses!")
         else:
@@ -63,7 +67,7 @@ def simulate_combat(character: Character, monster: dict, level_num: int) -> dict
                 log.append(f"Turn {turn}: {'Critical hit! ' if is_crit else ''}{character.name} attacks {monster["name"]} for {damage} damage!")
                 log.append(f"{monster["name"]} has {max(0, monster_hp)} health left.")
         
-        # Monster attack ## if alive ## 
+        # monster attack (only if still allive) 
         if monster_hp > 0:
             if random.random() > monster_hit_chance:
                 log.append(f"Turn {turn}: {monster['name']} misses!")
