@@ -302,10 +302,10 @@ Four classes, each with a distinct path to building power:
 
 | Class | HP | ATK | DEF | Identity | Passive Bonus |
 |-------|-----|-----|-----|----------|---------------|
-| **Warrior** | 120 | 10 | 8 | Tank / Steady | +2 DEF per level (instead of +1). Higher base survivability. |
-| **Mage** | 80 | 15 | 4 | Burst / Gold | +15% bonus gold from monster kills. High risk, high reward farming. |
-| **Rogue** | 100 | 12 | 5 | Luck / Drops | +10% item drop chance. Higher crit chance (15% base vs 10%). |
-| **Ranger** | 100 | 11 | 6 | Efficiency / XP | +15% bonus XP from kills. Reaches higher levels faster. |
+| **Warrior** | 120 | 10 | 8 | Tank / Steady | +2 DEF per level (instead of +1). Higher base survivability. *(not yet implemented)* |
+| **Mage** | 80 | 15 | 4 | Burst / Gold | +15% bonus gold from monster kills. *(not yet implemented)* |
+| **Rogue** | 100 | 12 | 5 | Luck / Drops | +5% crit bonus, +8% dodge bonus (implemented). +10% item drop chance *(not yet implemented)*. |
+| **Ranger** | 100 | 11 | 6 | Efficiency / XP | +15% bonus XP from kills. *(not yet implemented)* |
 
 ### Stat Growth Per Level
 
@@ -318,7 +318,7 @@ Four classes, each with a distinct path to building power:
 ### XP & Leveling
 
 ```python
-xp_to_next_level = level * 100  # Level 1→2 = 100xp, 2→3 = 200xp, etc.
+xp_to_next_level = round(100 * level ** 1.5)  # exponential curve — changed from linear during implementation
 ```
 
 > **TODO — Balancing**: XP rewards from monsters and the leveling curve need a dedicated balancing pass. The goal is that players progress through each zone over ~2-3 days of active play (using full stamina 2x/day). Monster XP values in seed data are placeholder estimates — test and adjust once the combat loop is playable.
@@ -360,17 +360,17 @@ damage = round(damage)
 ### Hit & Crit System
 
 ```python
-# Hit chance: based on level difference
-hit_chance = 0.85 + (attacker.level - defender.level) * 0.03
-hit_chance = clamp(hit_chance, 0.50, 0.95)
+# Hit chance: based on power level ratio (changed from level-based during implementation)
+ratio = character.power_level / max(monster_power, 1)
+hit_chance = clamp(0.85 + (ratio - 1) * 0.1, 0.50, 0.95)
+monster_hit_chance = clamp(0.85 - (ratio - 1) * 0.1, 0.50, 0.95)
 
-# Crit chance: flat base, Rogues get bonus
-crit_chance = 0.10  # 10% base, Rogue = 15%
+# Crit chance: 10% base + class crit_bonus; Rogue cap 50%, others 40%
+crit_chance = clamp(0.10 + character.crit_bonus, 0, crit_cap)
 crit_multiplier = 1.5
 
-# Dodge chance
-dodge_chance = 0.05 + (defender.defense / 200)
-dodge_chance = clamp(dodge_chance, 0.05, 0.20)
+# Dodge chance: defense-based + class dodge_bonus; Rogue cap 40%, others 35%
+dodge_chance = clamp(0.05 + (character.defense / 200) + character.dodge_bonus, 0.05, dodge_cap)
 ```
 
 ### Win Chance (PvE Approximation)
@@ -408,9 +408,9 @@ Turn 7: You strike Goblin for 13 damage. Goblin defeated!
 
 ### Unlocking Rules
 
-- **Next monster**: beat Level 3 of current monster to unlock the next monster in the zone
-- **Next zone**: beat Level 5 of the final monster in the current zone
-- **Boss fights**: Level 5 of the final monster in each zone is a "boss" (costs 10 stamina)
+- **Next monster**: beat Level 3 of current monster to unlock the next monster in the zone *(implemented)*
+- **Next zone**: beat Level 5 of the final monster (zone boss) in the current zone *(not yet implemented — zone_progress row not written on boss kill)*
+- **Boss fights**: the final monster in each zone is flagged `is_zone_boss=True` (costs 10 stamina) *(implemented)*
 
 ### Zone Layout
 
@@ -465,8 +465,8 @@ Each monster level multiplies base stats:
 | Max stamina | 100 |
 | Normal fight cost | 5 stamina |
 | Boss fight cost | 10 stamina (level 5 of final zone monster) |
-| Recharge rate | 1 stamina per 3 minutes |
-| Full recharge time | ~5 hours |
+| Recharge rate | 5 stamina per 3 minutes |
+| Full recharge time | ~1 hour |
 | Fights per full bar | 20 normal fights (or 10 boss fights) |
 
 - Stamina recharges passively via server-side timer (Redis)
@@ -505,15 +505,8 @@ Drop chance increases with zone progression. Zone 4 has a realistic chance for e
 ### Power Level Calculation
 
 ```python
-power_level = (
-    character.level * 10 +
-    character.attack +
-    character.defense +
-    character.max_hp / 2 +
-    sum(item.attack_bonus for item in equipped_items) +
-    sum(item.defense_bonus for item in equipped_items) +
-    sum(item.hp_bonus for item in equipped_items) / 2
-)
+# Current implementation (gear bonuses to be added when inventory is built)
+power_level = 10 + attack * 2 + defense + hp // 3
 ```
 
 ---

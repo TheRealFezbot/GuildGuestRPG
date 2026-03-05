@@ -1,6 +1,10 @@
 from sqlalchemy.orm import Session
 
+from app.crud.zone import get_next_zone, get_zone_progress
 from app.models.monster_progress import MonsterProgress
+from app.core.constants import ZONE_UNLOCK_THRESHOLD
+from app.models.zone_progress import ZoneProgress
+from app.crud.monster import get_monster_by_id
 from app.models.combat_logs import CombatLogs
 from app.core.enums import CombatResult
 
@@ -41,6 +45,18 @@ def _create_combat_log(db: Session, character_id: str, monster_id: str, level: i
         )
     )
 
+def _unlock_next_zone(db: Session, character_id: str, monster_id: str, level_beaten: int):
+    monster = get_monster_by_id(db, monster_id)
+    if monster.is_zone_boss and level_beaten >= ZONE_UNLOCK_THRESHOLD:
+        next_zone = get_next_zone(db, monster.zone_id)
+        if next_zone:
+            next_zone_progress = get_zone_progress(db, next_zone.id, character_id)
+            if next_zone_progress:
+                next_zone_progress.is_unlocked = True
+            else:
+                db.add(ZoneProgress(zone_id=next_zone.id, character_id=character_id, is_unlocked=True))
+
+
 def save_combat_result(
         db: Session, 
         character_id: str, 
@@ -50,4 +66,7 @@ def save_combat_result(
         result: dict):
     _update_monster_progress(db, character_id, monster_id, level_beaten, combat_result == CombatResult.win)
     _create_combat_log(db, character_id, monster_id, level_beaten, combat_result, result)
+    # checks if zone should be unlocked and if so unlocks it
+    if combat_result == CombatResult.win:
+        _unlock_next_zone(db, character_id, monster_id, level_beaten)
     db.commit()

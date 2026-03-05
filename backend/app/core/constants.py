@@ -36,3 +36,4 @@ STAMINA_COST_BOSS = 10
 
 # MONSTERS
 MONSTER_UNLOCK_THRESHOLD = 3 # Highest level beaten needed to unlock the next monster
+ZONE_UNLOCK_THRESHOLD = 5 # Highest level beaten on Zone Boss to unlock the next zone

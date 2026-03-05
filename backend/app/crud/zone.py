@@ -18,3 +18,10 @@ def get_zones_for_character(db: Session, character_id: str):
 
 def get_zone_progress(db: Session, zone_id: str, character_id: str):
     return db.query(ZoneProgress).filter(ZoneProgress.zone_id == zone_id, ZoneProgress.character_id == character_id).first()
+
+def get_zone_by_id(db: Session, zone_id: str):
+    return db.query(Zone).filter(Zone.id == zone_id).first()
+
+def get_next_zone(db: Session, zone_id: str):
+    current_zone = get_zone_by_id(db, zone_id)
+    return db.query(Zone).filter(Zone.order == current_zone.order + 1).first()
