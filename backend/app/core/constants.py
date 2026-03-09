@@ -14,10 +14,10 @@ MAX_CHARACTER_NAME_LENGTH = 20
 
 
 BASE_STATS = {
-    ClassType.warrior: { "hp": 120, "attack": 10, "defense": 8, "crit_bonus": 0.0, "dodge_bonus": 0.0 },
-    ClassType.mage:    { "hp": 80,  "attack": 15, "defense": 4, "crit_bonus": 0.0, "dodge_bonus": 0.0 },
-    ClassType.rogue:   { "hp": 100, "attack": 12, "defense": 5, "crit_bonus": 0.05, "dodge_bonus": 0.08 },
-    ClassType.ranger:  { "hp": 100, "attack": 11, "defense": 6, "crit_bonus": 0.0, "dodge_bonus": 0.0 },
+    ClassType.warrior: { "hp": 120, "attack": 10, "defense": 8, "crit_bonus": 0.0, "dodge_bonus": 0.0, "hit_bonus": 0.0},
+    ClassType.mage:    { "hp": 80,  "attack": 15, "defense": 4, "crit_bonus": 0.0, "dodge_bonus": 0.0, "hit_bonus": 0.0 },
+    ClassType.rogue:   { "hp": 100, "attack": 12, "defense": 5, "crit_bonus": 0.05, "dodge_bonus": 0.08, "hit_bonus": 0.0 },
+    ClassType.ranger:  { "hp": 100, "attack": 11, "defense": 6, "crit_bonus": 0.0, "dodge_bonus": 0.0, "hit_bonus": 0.10 },
 }
 
 STAT_GROWTH = {

@@ -29,6 +29,7 @@ class CharacterResponse(BaseModel):
     defense: int
     crit_bonus: float
     dodge_bonus: float
+    hit_bonus: float
     power_level: int
     stamina: int
     stamina_updated_at: datetime

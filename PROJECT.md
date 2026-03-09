@@ -1033,14 +1033,14 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [x] Write seed data script: insert all 4 zones with descriptions
   - [x] Write seed data script: insert all 16 monsters with base stats (see Seed Data section)
   - [x] Write seed data script: insert monster level multipliers (1.0x through 2.5x)
-  - [ ] Auto-unlock Zone 1 for new characters on creation
+  - [x] Auto-unlock Zone 1 for new characters on creation
 
-- [ ] **Monster progression system (unlock logic)**
-  - [ ] `GET /zones` — list all zones with is_unlocked status for current character
-  - [ ] `GET /zones/{id}/monsters` — list monsters in zone with progress (highest_level_beaten, total_kills, is_unlocked)
-  - [ ] Implement unlock check: next monster unlocks when current monster's highest_level_beaten >= 3
-  - [ ] Implement zone unlock check: zone N+1 unlocks when final monster in zone N has highest_level_beaten = 5
-  - [ ] First monster in each zone auto-unlocks when zone is unlocked
+- [x] **Monster progression system (unlock logic)**
+  - [x] `GET /zones` — list all zones with is_unlocked status for current character
+  - [x] `GET /zones/{id}/monsters` — list monsters in zone with progress (highest_level_beaten, total_kills, is_unlocked)
+  - [x] Implement unlock check: next monster unlocks when current monster's highest_level_beaten >= 3
+  - [x] Implement zone unlock check: zone N+1 unlocks when final boss in zone N has highest_level_beaten = 5 (checked on win in save_combat_result)
+  - [x] First monster in each zone auto-unlocks when zone is unlocked
   - [ ] Frontend: zone overview page with zone cards showing lock/unlock state and progress
   - [ ] Frontend: monster list page per zone with level progress indicators and fight buttons
 
@@ -1069,9 +1069,9 @@ GET    /admin/stats                  - Game statistics dashboard data
 - [ ] **XP, gold, and loot rewards**
   - [ ] Create migration: `combat_logs` table (character_id, monster_id, monster_level, result, xp_gained, gold_gained, item_dropped_id, turns_taken, combat_text JSON, potions_used JSON, damage_dealt, damage_taken, created_at)
   - [ ] On win: calculate gold (random between monster gold_min and gold_max × level multiplier)
-  - [ ] Apply class bonus: Mage gets +15% gold
+  - [x] Apply class bonus: Mage gets +15% gold
   - [ ] On win: calculate XP (monster base_xp × level multiplier)
-  - [ ] Apply class bonus: Ranger gets +15% XP
+  - [x] Apply class bonus: Ranger gets +10% hit chance (hit_bonus column, applied in combat service)
   - [ ] On win: roll for item drop (base 10% chance, Rogue 20%) — placeholder until Phase 3
   - [ ] On lose: no rewards, but stamina is still consumed
   - [ ] Update character gold, xp, and monster_progress (highest_level_beaten, total_kills)

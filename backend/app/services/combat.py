@@ -36,7 +36,7 @@ def simulate_combat(character: Character, monster: dict, level_num: int) -> dict
     # hit chance scales with the power level ratio - ratio > 1 means we outpower the monster
     # stronger character hits more often and is harder to hit back
     ratio = character.power_level / max(monster_power, 1)
-    hit_chance = clamp(0.85 + (ratio - 1) * 0.1, 0.50, 0.95)
+    hit_chance = clamp(0.85 + (ratio - 1) * 0.1 + character.hit_bonus, 0.50, 0.95)
     monster_hit_chance = clamp(0.85 - (ratio - 1) * 0.1, 0.50, 0.95)
     
     monster_hp = round(scaled_monster_stats["hp"])
@@ -86,6 +86,8 @@ def simulate_combat(character: Character, monster: dict, level_num: int) -> dict
         winner = "player"
         xp_gained = round(monster["base_xp_reward"] * level_data.xp_multiplier)
         gold_gained = round(random.randint(monster["base_gold_min"], monster["base_gold_max"]) * level_data.gold_multiplier)
+        if character.class_type == ClassType.mage:
+            gold_gained = round(gold_gained * 1.15)
         log.append(f"{character.name} has won!")
     else:
         winner = "monster"

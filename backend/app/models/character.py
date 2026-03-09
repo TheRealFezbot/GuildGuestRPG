@@ -33,6 +33,7 @@ class Character(Base):
     defense = Column(Integer, nullable=False)
     crit_bonus = Column(Float, default=0.0, nullable=False)
     dodge_bonus = Column(Float, default=0.0, nullable=False)
+    hit_bonus = Column(Float, default=0.0, nullable=False)
     power_level = Column(Integer, nullable=False)
     stamina = Column(Integer, default=100, nullable=False)
     stamina_updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)

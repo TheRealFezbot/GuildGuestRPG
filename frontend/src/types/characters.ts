@@ -11,6 +11,7 @@ export interface Character {
     defense: number
     crit_bonus: number
     dodge_bonus: number
+    hit_bonus: number
     power_level: number
     stamina: number
     stamina_updated_at: string
