@@ -8,46 +8,20 @@ def clamp(value, min_val, max_val):
     return max(min_val, min(max_val, value))
 
 def simulate_combat(character: Character, monster: dict, level_num: int) -> dict:
-    level_data = next((l for l in monster["levels"] if l.level == level_num), None)
-    if not level_data:
-        raise ValueError(f"Level {level_num} not found for monster")
-    
-    # scale base stats by the level multipliers (levels 1-5 make the monster progressively stronger)
-    scaled_monster_stats = {
-        "hp": monster["base_hp"] * level_data.hp_multiplier,
-        "attack": monster["base_attack"] * level_data.attack_multiplier,
-        "defense": monster["base_defense"] * level_data.defense_multiplier,
-    }
+    # Calculate monster stats based on the level
+    scaled_monster_stats, monster_power, level_data = _scale_monster_stats(monster, level_num)
+    # Build correct player stats
+    player_hp, crit_chance, base_damage, dodge_chance, hit_chance = _build_player_stats(character, scaled_monster_stats, monster_power)
+    # Build correct monster stats
+    monster_hp, monster_base_damage, monster_dodge_chance, monster_hit_chance = _build_monster_stats(character, scaled_monster_stats, monster_power)
 
-    monster_power = calculate_power_level(
-        round(scaled_monster_stats["hp"]),
-        round(scaled_monster_stats["attack"]),
-        round(scaled_monster_stats["defense"]),
-    )
-
-    player_hp = character.max_hp
-    # rogue gets higher crit and dodge caps as a class passive
-    crit_cap = 0.50 if character.class_type == ClassType.rogue else 0.40
-    crit_chance = clamp(0.10 + character.crit_bonus, 0, crit_cap)
-    base_damage = max(1, character.attack - (scaled_monster_stats["defense"] / 2))
-    dodge_cap = 0.40 if character.class_type == ClassType.rogue else 0.35
-    dodge_chance = clamp(0.05 + (character.defense / 200) + character.dodge_bonus, 0.05, dodge_cap)
-
-    # hit chance scales with the power level ratio - ratio > 1 means we outpower the monster
-    # stronger character hits more often and is harder to hit back
-    ratio = character.power_level / max(monster_power, 1)
-    hit_chance = clamp(0.85 + (ratio - 1) * 0.1 + character.hit_bonus, 0.50, 0.95)
-    monster_hit_chance = clamp(0.85 - (ratio - 1) * 0.1, 0.50, 0.95)
-    
-    monster_hp = round(scaled_monster_stats["hp"])
-    monster_base_damage = max(1, scaled_monster_stats["attack"] - (character.defense / 2))
-    monster_dodge_chance = clamp(0.05 + (scaled_monster_stats["defense"] / 200), 0.05, 0.20)
-    
     log = []
     turn = 0
     damage_dealt = 0
     damage_taken = 0
     winner = None
+
+    # COMBAT LOOP
 
     while player_hp > 0 and monster_hp > 0:
         turn += 1
@@ -67,7 +41,7 @@ def simulate_combat(character: Character, monster: dict, level_num: int) -> dict
                 log.append(f"Turn {turn}: {'Critical hit! ' if is_crit else ''}{character.name} attacks {monster["name"]} for {damage} damage!")
                 log.append(f"{monster["name"]} has {max(0, monster_hp)} health left.")
         
-        # monster attack (only if still allive) 
+        # monster attack (only if still alive) 
         if monster_hp > 0:
             if random.random() > monster_hit_chance:
                 log.append(f"Turn {turn}: {monster['name']} misses!")
@@ -84,10 +58,7 @@ def simulate_combat(character: Character, monster: dict, level_num: int) -> dict
     
     if monster_hp <= 0:
         winner = "player"
-        xp_gained = round(monster["base_xp_reward"] * level_data.xp_multiplier)
-        gold_gained = round(random.randint(monster["base_gold_min"], monster["base_gold_max"]) * level_data.gold_multiplier)
-        if character.class_type == ClassType.mage:
-            gold_gained = round(gold_gained * 1.15)
+        xp_gained, gold_gained = _calc_rewards(monster, level_data, character)
         log.append(f"{character.name} has won!")
     else:
         winner = "monster"
@@ -106,4 +77,59 @@ def simulate_combat(character: Character, monster: dict, level_num: int) -> dict
         "combat_text": log,
     }  
 
+def _scale_monster_stats(monster, level_num):
+    level_data = next((l for l in monster["levels"] if l.level == level_num), None)
+    if not level_data:
+        raise ValueError(f"Level {level_num} not found for monster")
+    
+    # scale base stats by the level multipliers (levels 1-5 make the monster progressively stronger)
+    scaled_monster_stats = {
+        "hp": monster["base_hp"] * level_data.hp_multiplier,
+        "attack": monster["base_attack"] * level_data.attack_multiplier,
+        "defense": monster["base_defense"] * level_data.defense_multiplier,
+    }
 
+    # calculate power level based on stats
+    monster_power = calculate_power_level(
+        round(scaled_monster_stats["hp"]),
+        round(scaled_monster_stats["attack"]),
+        round(scaled_monster_stats["defense"]),
+    )
+
+    return scaled_monster_stats, monster_power, level_data
+
+def _build_player_stats(character, scaled_monster_stats, monster_power):
+    player_hp = character.max_hp
+    
+    # rogue gets higher crit and dodge caps as a class passive
+    crit_cap = 0.50 if character.class_type == ClassType.rogue else 0.40
+    crit_chance = clamp(0.10 + character.crit_bonus, 0, crit_cap)
+    
+    base_damage = max(1, character.attack - (scaled_monster_stats["defense"] / 2))
+    
+    dodge_cap = 0.40 if character.class_type == ClassType.rogue else 0.35
+    dodge_chance = clamp(0.05 + (character.defense / 200) + character.dodge_bonus, 0.05, dodge_cap)
+
+    # hit chance scales with the power level ratio - ratio > 1 means we outpower the monster
+    # stronger character hits more often and is harder to hit back
+    ratio = character.power_level / max(monster_power, 1)
+    hit_chance = clamp(0.85 + (ratio - 1) * 0.1 + character.hit_bonus, 0.50, 0.95)
+
+    return player_hp, crit_chance, base_damage, dodge_chance, hit_chance
+
+def _build_monster_stats(character, scaled_monster_stats, monster_power):
+    ratio = character.power_level / max(monster_power, 1)
+    monster_hp = round(scaled_monster_stats["hp"])
+    monster_base_damage = max(1, scaled_monster_stats["attack"] - (character.defense / 2))
+    monster_dodge_chance = clamp(0.05 + (scaled_monster_stats["defense"] / 200), 0.05, 0.20)
+    monster_hit_chance = clamp(0.85 - (ratio - 1) * 0.1, 0.50, 0.95)
+
+    return monster_hp, monster_base_damage, monster_dodge_chance, monster_hit_chance
+
+def _calc_rewards(monster, level_data, character):
+    xp_gained = round(monster["base_xp_reward"] * level_data.xp_multiplier)
+    gold_gained = round(random.randint(monster["base_gold_min"], monster["base_gold_max"]) * level_data.gold_multiplier)
+    if character.class_type == ClassType.mage:
+        gold_gained = round(gold_gained * 1.15)
+    
+    return xp_gained, gold_gained
