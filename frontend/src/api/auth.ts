@@ -26,3 +26,8 @@ export const requestPasswordReset = async (email: string): Promise<void> => {
 export const resetPassword = async (token: string, new_password: string) => {
     await client.post('/auth/reset-password', { token, new_password })
 }
+
+export const refresh = async (refresh_token: string) => {
+    const res = await client.post('/auth/refresh', { refresh_token })
+    return res.data
+}
