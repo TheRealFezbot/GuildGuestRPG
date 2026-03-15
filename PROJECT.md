@@ -1098,28 +1098,27 @@ GET    /admin/stats                  - Game statistics dashboard data
 
 ### Phase 3: Items & Economy (Target: ~8-10 hours)
 
-- [ ] **Item system (templates, rarity)**
-  - [ ] Create migration: `items` table (id, name, type, rarity, attack_bonus, defense_bonus, hp_bonus, buy_price, sell_price, zone_id FK nullable, level_requirement)
-  - [ ] Write seed data: Zone 1 items (common + uncommon weapons, armor, accessories)
-  - [ ] Write seed data: Zone 2 items (uncommon + rare)
-  - [ ] Write seed data: Zone 3 items (rare + epic)
-  - [ ] Write seed data: Zone 4 items (epic, small chance for special items)
-  - [ ] Define sell_price = 40% of buy_price for all items
-  - [ ] Set level_requirement per item (roughly matching zone recommended levels)
+- [x] **Item system (templates, rarity)**
+  - [x] Create migration: `items` table (id, name, type, rarity, attack_bonus, defense_bonus, hp_bonus, buy_price, sell_price, zone_id FK nullable, level_requirement, class_type nullable)
+  - [x] Write seed data: Zone 1–4 items — shop set (4 classes × 6 slots) + drop set per zone, plus universal accessories
+  - [x] Define sell_price = ~50% of buy_price for all items
+  - [x] Set level_requirement per item (matching zone recommended levels)
 
-- [ ] **Inventory management (equip, unequip, discard)**
-  - [ ] Create migration: `inventory` table (id, character_id FK, item_id FK, is_equipped boolean, acquired_at)
-  - [ ] `GET /inventory` — return all items in character's inventory with equipped status and item details
-  - [ ] `POST /inventory/equip/{id}` — validate: item exists in inventory, character meets level_requirement, slot not already occupied (auto-unequip if it is)
-  - [ ] `POST /inventory/unequip/{id}` — set is_equipped = false
-  - [ ] `DELETE /inventory/{id}` — remove item from inventory (cannot discard equipped items)
-  - [ ] Recalculate power_level after any equip/unequip change
-  - [ ] Enforce equipment rules: only 1 weapon, 1 armor, 1 accessory equipped at a time
-  - [ ] Frontend: inventory grid showing items with rarity color coding (gray/green/blue/purple/orange)
-  - [x] Frontend: equip/unequip via double-click, equipped items display on character stats page and dashboard
+- [x] **Inventory management (equip, unequip)**
+  - [x] Migration: `inventory` table (id, character_id FK, item_id FK, equipped_slot Enum nullable, acquired_at) + UniqueConstraint(character_id, equipped_slot)
+  - [x] `GET /inventory` — returns all items with equipped_slot, item details
+  - [x] `POST /inventory/{id}/equip` — sets equipped_slot, auto-unequips previous item in slot, recalcs stats + power_level
+  - [x] `POST /inventory/{id}/unequip` — sets equipped_slot = None, subtracts stat bonuses, clamps hp to max_hp
+  - [x] Recalculate power_level after equip/unequip via apply_equipment_stats() in core/game.py
+  - [x] Frontend: body-layout equipment panel (3-col grid), bag grid, double-click to equip/unequip
+  - [x] Frontend: equipped items shown on dashboard equipment panel
+  - [ ] Frontend: rarity color coding on item cards
   - [ ] Frontend: drag and drop equip/unequip using dnd-kit
   - [ ] Frontend: hover tooltip on items showing stats + power level delta on equip
   - [ ] Frontend: tooltip shows reason if item cannot be equipped (class restriction, level requirement)
+  - [ ] Backend: enforce class restriction on equip (return 400 if class_type mismatch)
+  - [ ] Backend: enforce level_requirement on equip (return 400 if character level too low)
+  - [ ] `DELETE /inventory/{id}` — discard item (cannot discard equipped items)
 
 - [ ] **Potion system**
   - [ ] Create migration: `potions` table (id, name, type, effect_value, buy_price, sell_price)
@@ -1133,15 +1132,15 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [ ] Frontend: potion inventory display with quantities
   - [ ] Frontend: pre-fight screen shows potion selection (toggle attack potion, set health potion loadout)
 
-- [ ] **Shop per zone (buy/sell)**
-  - [ ] Create migration: `shop_listings` table (id, zone_id FK, item_id FK nullable, potion_id FK nullable, stock nullable, is_active)
-  - [ ] Seed data: populate shop listings for each zone with appropriate items + all potions
-  - [ ] `GET /shop?zone={zone_id}` — return shop listings for a zone (default: character's highest unlocked zone)
-  - [ ] `POST /shop/buy/{listing_id}` — validate: character has enough gold, item meets requirements, carry limit not exceeded (potions), deduct gold, add to inventory/potion_inventory
-  - [ ] `POST /shop/sell/{inventory_id}` — validate: item not equipped, calculate sell price (40% buy), add gold, remove from inventory
-  - [ ] Frontend: shop page with tabs for weapons/armor/accessories/potions
-  - [ ] Frontend: buy button with gold cost, sell button with gold return
-  - [ ] Frontend: zone selector to browse shops from different zones
+- [x] **Shop per zone (buy)**
+  - [x] Migration: `shop_listings` table (id, zone_id FK, item_id FK nullable, potion_id FK nullable, stock nullable, is_active) + CheckConstraint(exactly one of item_id/potion_id set)
+  - [x] Seed data: shop listings for all 4 zones (4 classes × 6 slots + universal accessory per zone)
+  - [x] `GET /shop/{zone_id}` — return shop listings for a zone with full item details
+  - [x] `POST /shop/{zone_id}/buy/{item_id}` — validates gold, prevents duplicate purchase, deducts gold, adds to inventory
+  - [ ] `POST /shop/sell/{inventory_id}` — validate not equipped, add sell_price gold, remove from inventory
+  - [ ] Frontend: shop page (in progress)
+  - [ ] Frontend: zone selector to browse different zone shops
+  - [ ] Frontend: sell button on inventory items
 
 - [ ] **Item drops from monsters**
   - [ ] On combat win: roll drop chance (base 10%, Rogue 20%, + drop_chance_bonus from monster_levels row)
@@ -1152,10 +1151,11 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [ ] Include drop in combat log text: "Item Drop: [Item Name] ([rarity])"
   - [ ] Frontend: highlight item drops in combat result with rarity color
 
-- [ ] **Power level recalculation on gear changes**
-  - [ ] Call power_level recalc on: equip, unequip, level up, item discard
-  - [ ] Include equipped item bonuses in formula: sum attack_bonus, defense_bonus, hp_bonus/2
-  - [ ] Update cached power_level field on character record
+- [x] **Power level recalculation on gear changes**
+  - [x] Recalcs on equip, unequip, level up
+  - [x] Formula: `10 + attack*2 + defense + max_hp//3` — includes gear bonuses since they're written directly to character stats
+  - [x] `apply_equipment_stats()` in core/game.py handles add/subtract + recalc atomically
+  - [ ] Recalc on item discard (not built yet)
   - [ ] Verify power_level updates propagate to leaderboard (Phase 4)
 
 ### Phase 4: Competition & Social (Target: ~8-12 hours)
