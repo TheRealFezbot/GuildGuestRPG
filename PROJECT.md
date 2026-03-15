@@ -1116,8 +1116,10 @@ GET    /admin/stats                  - Game statistics dashboard data
   - [ ] Recalculate power_level after any equip/unequip change
   - [ ] Enforce equipment rules: only 1 weapon, 1 armor, 1 accessory equipped at a time
   - [ ] Frontend: inventory grid showing items with rarity color coding (gray/green/blue/purple/orange)
-  - [ ] Frontend: equip/unequip buttons, stat comparison tooltip when hovering items
-  - [ ] Frontend: equipped items display on character stats page
+  - [x] Frontend: equip/unequip via double-click, equipped items display on character stats page and dashboard
+  - [ ] Frontend: drag and drop equip/unequip using dnd-kit
+  - [ ] Frontend: hover tooltip on items showing stats + power level delta on equip
+  - [ ] Frontend: tooltip shows reason if item cannot be equipped (class restriction, level requirement)
 
 - [ ] **Potion system**
   - [ ] Create migration: `potions` table (id, name, type, effect_value, buy_price, sell_price)

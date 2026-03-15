@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import type { InventoryItem } from "../../types/inventory"
 import type { Character } from "../../types/characters"
 import { getMyCharacter } from "../../api/characters"
+import { getInventory } from "../../api/inventory"
+import { useNavigate } from "react-router-dom"
 import type { Zone } from "../../types/zones"
+import { useEffect, useState } from "react"
 import { getZones } from "../../api/zones"
+
+
+
 
 function HomePage() {
     const navigate = useNavigate()
@@ -11,7 +16,7 @@ function HomePage() {
     const [isLoading, setIsLoading] = useState(true)
     const [displayStamina, setDisplayStamina] = useState<number | null>(0)
     const [zones, setZones] = useState<Zone[]>([])
-
+    const [items, setItems] = useState<InventoryItem[]>([])
     
     useEffect(() => {
         getMyCharacter()
@@ -27,6 +32,7 @@ function HomePage() {
         getZones()
         .then(data => setZones(data))
         .finally(() => setIsLoading(false))
+        getInventory().then(data => setItems(data))
     }, [])
 
     // recalculate stamina client-side every minute so the display stays accurate without polling the server
@@ -92,12 +98,17 @@ function HomePage() {
                 <div className="bg-surface border border-gold/20 rounded-lg p-4 flex flex-col gap-3">
                     <h2 className="text-gold font-bold">Equipment</h2>
                     <div className="grid grid-cols-2 gap-2">
-                        {["Head", "Chest", "Legs", "Weapon", "Offhand", "Accessory"].map(slot => (
-                            <div key={slot} className="bg-bg border border-gold/10 rounded p-2 text-center">
-                                <p className="text-parchment/40 text-xs">{slot}</p>
-                                <p className="text-parchment/20 text-xs">Empty</p>
-                            </div>
-                        ))}
+                        {["head", "chest", "legs", "weapon", "offhand", "accessory"].map(slot => {
+                            const item = items.find(i => i.equipped_slot === slot)
+                            return (
+                                <div key={slot} className="bg-bg border border-gold/10 rounded p-2 text-center">
+                                    <p className="text-parchment/40 text-xs capitalize">{slot}</p>
+                                    <p className={`text-xs ${item ? "text-parchment" : "text-parchment/20"}`}>
+                                        {item ? item.name : "Empty"}
+                                    </p>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
 

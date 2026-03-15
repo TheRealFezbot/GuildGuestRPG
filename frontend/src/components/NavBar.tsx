@@ -24,7 +24,7 @@ function NavBar() {
                     <Link to="/" className="text-parchment hover:text-gold">Dashboard</Link>
                     <Link to="/zones/" className="text-parchment hover:text-gold">Zones</Link>
                     <span className="text-parchment/30 cursor-not-allowed">Shop</span>
-                    <span className="text-parchment/30 cursor-not-allowed">Inventory</span>
+                    <Link to="/character/inventory" className="text-parchment hover:text-gold">Inventory</Link>
                     <span className="text-parchment/30 cursor-not-allowed">PvP</span>
                     <span className="text-parchment/30 cursor-not-allowed">Guild</span>
                     <span className="text-parchment/30 cursor-not-allowed">Leaderboards</span>

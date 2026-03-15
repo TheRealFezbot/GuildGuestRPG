@@ -15,6 +15,8 @@ def apply_equipment_stats(character: Character, item: Item, equip: bool = True):
     character.attack += item.attack_bonus * modifier 
     character.defense += item.defense_bonus * modifier
     character.max_hp += item.hp_bonus * modifier
+    if not equip and character.hp > character.max_hp:
+        character.hp = character.max_hp
     # TODO add item bonuses for crit and dodge
     character.power_level = calculate_power_level(character.max_hp, character.attack, character.defense)
 
