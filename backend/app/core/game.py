@@ -2,12 +2,21 @@ from datetime import datetime, timezone
 
 from app.core.constants import MAX_STAMINA, STAMINA_REGEN_MINUTES, STAMINA_REGEN_AMOUNT
 from app.models.character import Character
+from app.models.item import Item
 
 # CHARACTERS
 
 def calculate_power_level(hp: int, attack: int, defense: int) -> int:
     # attack weighted double since it tends to matter most in combat
     return 10 + attack * 2 + defense + hp // 3
+
+def apply_equipment_stats(character: Character, item: Item, equip: bool = True):
+    modifier = 1 if equip else -1
+    character.attack += item.attack_bonus * modifier 
+    character.defense += item.defense_bonus * modifier
+    character.max_hp += item.hp_bonus * modifier
+    # TODO add item bonuses for crit and dodge
+    character.power_level = calculate_power_level(character.max_hp, character.attack, character.defense)
 
 def xp_for_next_level(level: int) -> int:
     return round(100 * (level ** 1.5))
