@@ -17,7 +17,7 @@ function NavBar() {
         <nav className="bg-surface border-b border-gold/20">
             <div className="px-6 py-3 flex items-center justify-between">
                 {/* TITLE */}
-                <span className="text-gold font-bold text-lg">Guild Guest RPG</span>
+                <span className="text-gold font-bold text-lg">Forgeborn Chronicles</span>
 
                 {/* NAV LINKS — desktop */}
                 <div className="hidden md:flex gap-6 text-sm">
